@@ -1,7 +1,7 @@
 ;;;; -*- Mode: Emacs-Lisp -*- 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; 
-;;;; File            : S.el
+;;;; File            : rb.el
 ;;;; Authors         : Doug Bates
 ;;;;                 : Ed Kademan
 ;;;;                 : Frank Ritter
@@ -84,7 +84,7 @@
 ;;; files, and to display help on functions.  It also provides
 ;;; name completion while you do these.  For more detailed
 ;;; information see the documentation strings for S,
-;;; inferior-S-mode, S-mode, and comint-mode.  There are also
+;;; inferior-rb-mode, rb-mode, and comint-mode.  There are also
 ;;; many variables and hooks available for customizing (see
 ;;; the variables below that have document strings that start
 ;;; with an "*").
@@ -100,12 +100,12 @@
 ;;; "M-x S" from within emacs. You may also want to change some
 ;;; options, by putting lines such as the following in your .emacs:
 ;;; 
-;;;     (setq inferior-S-program "S") ; command to run S
-;;;	(setq S-version-running "2.3") ; Running the old version
-;;;	(setq S-ask-about-display t) ; Ask for an X-display
-;;;     (setq S-source-directory
-;;;	  (expand-file-name "~/S-Src/"))
-;;;	(setq S-keep-dump-files t)
+;;;     (setq inferior-rb-program "rb") ; command to run S
+;;;	(setq rb-version-running "2.3") ; Running the old version
+;;;	(setq rb-ask-about-display t) ; Ask for an X-display
+;;;     (setq rb-source-directory
+;;;	  (expand-file-name "~/rb-Src/"))
+;;;	(setq rb-keep-dump-files t)
 ;;;                  ; Make a directory of backup object source files
 ;;;
 ;;; See the section "User changeable variables" below for more options.
@@ -123,8 +123,8 @@
 ;;; on your system.  Copies are also available from ritter@cs.cmu.edu,
 ;;; and shivers@cs.cmu.edu.
 ;;;
-;;; S-mode is also available for anonymous FTP from
-;;; attunga.stats.adelaide.edu.au in the directory pub/S-mode. It is
+;;; rb-mode is also available for anonymous FTP from
+;;; attunga.stats.adelaide.edu.au in the directory pub/rb-mode. It is
 ;;; alsa avaliable from the Emacs-lisp archive on
 ;;; archive.cis.ohio-state.edu.
 
@@ -133,7 +133,7 @@
 ;;; Improvements since last release (unnumbered of Summer 1990):
 ;;; * Better description provided of functions loaded.
 ;;; * Better header for this file.
-;;; * S-directory is now a prescriptive rather than just 
+;;; * rb-directory is now a prescriptive rather than just 
 ;;;   descriptive variable.  
 ;;; * better syntax table, so |#; are better recognized and
 ;;;   commands using them work better.
@@ -169,17 +169,17 @@
 (require 'comint-extra)
 (autoload 'comint-isearch "comint-isearch" 
 	  "Isearch for comint [full documentation when loaded]" t)
-(provide 'S)
+(provide 'rb)
 
-(defconst S-mode-version "3.41" 
-  "Version of S-mode currently loaded.")
+(defconst rb-mode-version "3.41" 
+  "Version of rb-mode currently loaded.")
 
 ;; this will appear for just a short while, but it's a
 ;; chance to teach...
 (message 
  (concat (substitute-command-keys
-	  "Type \\[describe-mode] for help on S-mode version ")
-	 S-mode-version))
+	  "Type \\[describe-mode] for help on rb-mode version ")
+	 rb-mode-version))
 
 
 
@@ -191,25 +191,25 @@
 
 ;;; System dependent variables
 
-(defvar inferior-S-program "Splus"
+(defvar inferior-rb-program "rb"
   "*Program name for invoking an inferior S.")
 
-(defvar inferior-Splus-args nil
+(defvar inferior-rb-args nil
   "*String of arguments passed to the S process on startup if the name of
-the S program is `Splus'.")
+the S program is `rb'.")
 
-(defvar S-version-running "3.0"
+(defvar rb-version-running "3.0"
   "Version of S being run.")
 ;;; The value of this variable affects the
 ;;; default values of the following variables:
 ;;; 
-;;;	 inferior-S-help-command
-;;;	 inferior-S-search-list-command
-;;;	 S-dump-error-re
+;;;	 inferior-rb-help-command
+;;;	 inferior-rb-search-list-command
+;;;	 rb-dump-error-re
 ;;; 
 ;;; Modifications to these variables are made at *load* time (provided, of
 ;;; course, they have not already been given values), hence changing the
-;;; value of S-version-running after this package is loaded will have no
+;;; value of rb-version-running after this package is loaded will have no
 ;;; effect.
 ;;; 
 ;;; Currently the string \"3.0\" is the only value of this variable with
@@ -223,119 +223,119 @@ the S program is `Splus'.")
 ;;;   "2.3"    Version 2.3 of S/Splus
 ;;;   "old"    Any older version
 
-(defvar S-plus (assoc inferior-S-program '(("Splus") ("S+")))
+(defvar rb (assoc inferior-rb-program '(("rb") ("rb")))
   "Set to t if Splus is being used instead of vanilla S")
 ;;; Used for setting default values of other variables, and hence
 ;;; has no effect after S.el has been loaded.
 
-(defvar inferior-S-prompt "\\(\\+\\|[a-zA-Z0-9() ]*>\\) *"
+(defvar inferior-rb-prompt "\\(\\+\\|[a-zA-Z0-9() ]*>\\) *"
   "The regular expression inferior S mode uses for recognizing prompts
 Do not anchor to bol with `^'.")
 
-(defvar inferior-S-primary-prompt "[a-zA-Z0-9() ]*> *"
-  "Regular expression used by S-mode to detect the primary prompt.
+(defvar inferior-rb-primary-prompt "[a-zA-Z0-9() ]*> *"
+  "Regular expression used by rb-mode to detect the primary prompt.
 Do not anchor to bol with `^'.")
 
 ;;; Initialising the environment
 
-(defvar S-ask-for-S-directory t
+(defvar rb-ask-for-rb-directory t
   "*If non-nil, the process directory will be requested each time S is run")
 
-(defvar S-ask-about-display nil
+(defvar rb-ask-about-display nil
   "*If non-nil, asks for a value for the DISPLAY environment
 variable, to make X-windows work with S")
 
 (defvar X-displays-list '("unix:0.0")
   "List of strings that are candidates for the DISPLAY environment variable.")
 
-(defvar S-directory (file-name-as-directory (getenv "HOME"))
+(defvar rb-directory (file-name-as-directory (getenv "HOME"))
   "*The directory S is run from.  It must end in a slash.
-Provided as a default if S-ask-for-S-directory is non-nil.")
+Provided as a default if rb-ask-for-rb-directory is non-nil.")
 
 ;;; Editing functions
 
-(defvar S-insert-function-templates t
+(defvar rb-insert-function-templates t
   "*Boolean flag specifying action when editing a non-existent object.
-If t, then when the text of a dumped object contains S-dumped-missing-re,
-then it will be replaced by S-function-template.")
+If t, then when the text of a dumped object contains rb-dumped-missing-re,
+then it will be replaced by rb-function-template.")
 
   ;; By K.Shibayama 5.14.1992
 
-(defvar S-indent-level 2
+(defvar rb-indent-level 2
   "*Indentation of S statements with respect to containing block.")
 
-(defvar S-brace-imaginary-offset 0
+(defvar rb-brace-imaginary-offset 0
   "*Imagined indentation of a S open brace that actually follows a statement.")
 
-(defvar S-brace-offset 0
+(defvar rb-brace-offset 0
   "*Extra indentation for braces, compared with other text in same context.")
 
-(defvar S-continued-statement-offset 2
+(defvar rb-continued-statement-offset 2
   "*Extra indent for lines not starting new statements.")
 
-(defvar S-continued-brace-offset 0
+(defvar rb-continued-brace-offset 0
   "*Extra indent for substatements that start with open-braces.
-This is in addition to S-continued-statement-offset.")
+This is in addition to rb-continued-statement-offset.")
 
-(defvar S-arg-function-offset 2
+(defvar rb-arg-function-offset 2
   "*Extra indent for internal substatements of function `foo' that called
 in `arg=foo(...)' form. 
 If not number, the statements are indented at open-parenthesis following foo.")
 
-(defvar S-expression-offset 4
+(defvar rb-expression-offset 4
   "*Extra indent for internal substatements of `expression' that specified
 in `obj <- expression(...)' form. 
 If not number, the statements are indented at open-parenthesis following 
 `expression'.")
 
-(defvar S-auto-newline nil
+(defvar rb-auto-newline nil
   "*Non-nil means automatically newline before and after braces
 inserted in S code.")
 
-(defvar S-tab-always-indent t
+(defvar rb-tab-always-indent t
   "*Non-nil means TAB in S mode should always reindent the current line,
 regardless of where in the line point is when the TAB command is used.")
    
-(defvar S-default-style 'GNU
-  "*The default value of S-style")
+(defvar rb-default-style 'GNU
+  "*The default value of rb-style")
 
-(defvar S-style S-default-style
+(defvar rb-style rb-default-style
   "*The buffer specific S indentation style.")
 
 ;;; Dump files
 
-(defvar S-source-directory "/tmp/"
+(defvar rb-source-directory "/tmp/"
   "*Directory in which to place dump files.  
-The directory generated by S-source-directory-generator (if it is
-non-nil) is used preferentially, and the value of S-source-directory
+The directory generated by rb-source-directory-generator (if it is
+non-nil) is used preferentially, and the value of rb-source-directory
 is used only of the generated directory can not be written or
 created.")
 
-(defvar S-source-directory-generator nil
+(defvar rb-source-directory-generator nil
   "*Function which, when called with no args, will return a directory
 name (ending in a slash) into which S objects should be dumped. If this is
 nil of the directory does not exist and cannot be created, the value of
-S-source-directory is used.")
+rb-source-directory is used.")
 ;;; Possible value:
 ;;; '(lambda () (file-name-as-directory 
-;;;	      (expand-file-name (concat (car S-search-list) "/.Src"))))
+;;;	      (expand-file-name (concat (car rb-search-list) "/.Src"))))
 ;;; This always dumps to a sub-directory (".Src") of the current S
 ;;; working directory (i.e. first elt of search list)
 
-(defvar S-dump-filename-template (concat (user-login-name) ".%s.S")
+(defvar rb-dump-filename-template (concat (user-login-name) ".%s.rb")
   "*Template for filenames of dumped objects.
 %s is replaced by the object name.")
-;;; This gives filenames like `user.foofun.S', so as not to clash with
+;;; This gives filenames like `user.foofun.rb', so as not to clash with
 ;;; other users if you are using a shared directory. Other alternatives:
-;;; "%s.S" ; Don't bother uniquifying if using your own directory(ies)
+;;; "%s.rb" ; Don't bother uniquifying if using your own directory(ies)
 ;;; "dump" ; Always dump to a specific filename. This makes it impossible
 ;;;          to edit more than one object at a time, though.
 ;;; (make-temp-name "scr.") ; Another way to uniquify
 
-(defvar S-keep-dump-files nil
+(defvar rb-keep-dump-files nil
   "*If nil, delete dump files ater use. Otherwise, never delete.")
 ;;; Boolean flag which determines what to do with the dump files
-;;; generated by \\[S-dump-object-into-edit-buffer], as follows:
+;;; generated by \\[rb-dump-object-into-edit-buffer], as follows:
 ;;; 
 ;;; 	If nil: dump files are deleted after each use, and so appear
 ;;; only transiently. The one exception to this is when a loading error
@@ -349,38 +349,38 @@ S-source-directory is used.")
 ;;; Auto-save is always enabled in dump-file buffers to enable recovery
 ;;; from crashes.
 
-(defvar S-function-template " function( )\n{\n\n}\n"
+(defvar rb-function-template " function( )\n{\n\n}\n"
   "Function template used when editing nonexistent objects. 
 The edit buffer will contain the object name in quotes, followed by
 \"<-\", followed by this string.")
 
 ;;; Interacting with the S process
 
-(defvar S-execute-in-process-buffer nil
-  "*If non-nil, the S-execute- commands output to the process buffer.
+(defvar rb-execute-in-process-buffer nil
+  "*If non-nil, the rb-execute- commands output to the process buffer.
 Otherwise, they get their own temporary buffer.")
 
-(defvar S-eval-visibly-p nil
-  "*If non-nil, the S-eval- commands display the text to be evaluated 
+(defvar rb-eval-visibly-p nil
+  "*If non-nil, the rb-eval- commands display the text to be evaluated 
 in the process buffer.")
 
-(defvar S-tek-mode nil
+(defvar rb-tek-mode nil
   "*Grab Tek Graphics?
-Toggle with \\[S-tek-mode-toggle].")
+Toggle with \\[rb-tek-mode-toggle].")
 
-(defvar S-tek-possible-graph-prompts "Selection: "
+(defvar rb-tek-possible-graph-prompts "Selection: "
   "Prompts that might follow TEK graphics. 
 If S mode seems to lock up when grabbing graphics, it probably means
 you need something else in here. Your prompt is assumed: you don't
 need to include it. Separate options with \\|")
 
-(defvar S-tek-pause-for-graphics (not (string= (getenv "TERM") "xterm"))
+(defvar rb-tek-pause-for-graphics (not (string= (getenv "TERM") "xterm"))
   "If t, wait for a key to be pressed before returning to text mode.
 Use this option when graphics and text share the same screen.")
 
 ;;; Help mode
 
-(defvar S-help-sec-keys-alist 
+(defvar rb-help-sec-keys-alist 
   '((?a . "ARGUMENTS:") 
     (?b . "BACKGROUND:") (?B . "BUGS:")
     (?d . "DETAILS:") (?D . "DESCRIPTION:")
@@ -395,21 +395,21 @@ Use this option when graphics and text share the same screen.")
 
 ;;; Hooks
 
-(defvar S-mode-hook '()
+(defvar rb-mode-hook '()
   "*Hook for customizing S mode each time it is entered.")
 
-(defvar S-mode-load-hook '()
+(defvar rb-mode-load-hook '()
   "*Hook to call when S.el is loaded.")
 
-(defvar S-pre-run-hook nil
+(defvar rb-pre-run-hook nil
   "*Hook to call before starting up S.
 Good for setting up your directory.")
 ;; You can put something like:
-;; (setq S-directory (file-name-as-directory (concat (getenv "HOME") "/S")))
+;; (setq rb-directory (file-name-as-directory (concat (getenv "HOME") "/S")))
 ;; in your ~/.emacs file and S will always start up in your ~/S directory.
 ;; Alternatively, you can get S to start up in the directory you start 
 ;; Emacs from by putting this in your .emacs:
-;; (setq S-pre-run-hook '((lambda () (setq S-directory default-directory))))
+;; (setq rb-pre-run-hook '((lambda () (setq rb-directory default-directory))))
 
 
 
@@ -418,11 +418,11 @@ Good for setting up your directory.")
 ;;; Users note: You will rarely have to change these 
 ;;; variables.
 
-(defvar S-change-sp-regexp
+(defvar rb-change-sp-regexp
   "\\(attach(\\([^)]\\|$\\)\\|detach(\\|collection(\\|library(\\)"
   "The regexp for matching the S commands that change the search path.")
 
-(defvar S-function-pattern
+(defvar rb-function-pattern
   (concat
    "\\(" ; EITHER
    "\\s\"" ; quote
@@ -437,167 +437,167 @@ Good for setting up your directory.")
    "\\)")
   "The regular expression for matching the beginning of an S function.")
 
-(defvar S-source-modes '(S-mode)
+(defvar rb-source-modes '(rb-mode)
   "A list of modes used to determine if a buffer contains S source code.")
 ;;; If a file is loaded into a buffer that is in one of these major modes, it
-;;; is considered an S source file.  The function S-load-file uses this to
+;;; is considered an S source file.  The function rb-load-file uses this to
 ;;; determine defaults.
 
-(defvar inferior-S-load-command "source(\"%s\")\n"
+(defvar inferior-rb-load-command "source(\"%s\")\n"
   "Format-string for building the S command to load a file.")
 ;;; This format string should use %s to substitute a file name
 ;;; and should result in an S expression that will command the inferior S
 ;;; to load that file.
 
-(defvar inferior-S-dump-command "dump(\"%s\",file=\"%s\")\n"
+(defvar inferior-rb-dump-command "dump(\"%s\",file=\"%s\")\n"
   "Format-string for building the S command to dump an object into a file.")
 ;;; Use first %s to substitute an object name
 ;;;     second %s substitutes the dump file name.
 
-(defvar inferior-S-help-command 
-  (if S-plus
+(defvar inferior-rb-help-command 
+  (if rb
       "help(\"%s\",pager=\"cat\",window=F)\n" 
     "help(\"%s\")\n")
   "Format-string for building the S command to ask for help on an object.")
 ;;; This format string should use %s to substitute an object name.
 
-(defvar inferior-S-search-list-command "search()\n"
+(defvar inferior-rb-search-list-command "search()\n"
   "S command that prints out the search list.")
 ;;; i.e. The list of directories and (recursive) objects that S uses when
 ;;; it searches for objects.
 
-(defvar inferior-S-names-command "names(%s)\n"
+(defvar inferior-rb-names-command "names(%s)\n"
   "Format string for S command to extract names from an object.")
 ;;; %s is replaced by the object name -- usually a list or data frame
 
-(defvar inferior-S-objects-command 
-  (if (string= S-version-running "3.0")
+(defvar inferior-rb-objects-command 
+  (if (string= rb-version-running "3.0")
       "objects(%d)"
     "ls()")
   "Format string for S command to get a list of objects at position %d")
-;;; Don't include a newline at the end! Used in S-execute-objects
+;;; Don't include a newline at the end! Used in rb-execute-objects
 
-(defvar S-dumped-missing-re "\nDumped\n\\'"
+(defvar rb-dumped-missing-re "\nDumped\n\\'"
   "If a dumped object's buffer matches this re, then it is replaced
-by S-function-template.")
+by rb-function-template.")
 
-(defvar S-dump-error-re 
-  (if (string= S-version-running "3.0") "\nDumped\n\\'" "[Ee]rror")
+(defvar rb-dump-error-re 
+  (if (string= rb-version-running "3.0") "\nDumped\n\\'" "[Ee]rror")
   "Regexp used to detect an error when loading a file.")
 
-(defvar S-error-buffer-name " *S-errors*"
+(defvar rb-error-buffer-name " *rb-errors*"
   "Name of buffer to keep error messages in.")
 
-(defvar S-loop-timeout 20000
-  "Integer specifying how many loops S-mode will wait for the prompt for
+(defvar rb-loop-timeout 20000
+  "Integer specifying how many loops rb-mode will wait for the prompt for
 before signalling an error.")
 
-(defvar S-search-list nil
+(defvar rb-search-list nil
   "The list of directories and (recursive) objects to search for S objects.")
 
-(defvar S-sl-modtime-alist nil
+(defvar rb-sl-modtime-alist nil
   "Alist of modtimes for all S directories accessed this session.")
 
-(defvar S-sp-change nil
+(defvar rb-sp-change nil
   "This symbol flags a change in the S search path.")
 
-(defvar S-prev-load-dir/file nil
+(defvar rb-prb-load-dir/file nil
   "This symbol saves the (directory . file) pair used in the last
-S-load-file command.  Used for determining the default in the next one.")
+rb-load-file command.  Used for determining the default in the next one.")
 
-(defvar inferior-S-get-prompt-command "options()$prompt\n"
+(defvar inferior-rb-get-prompt-command "options()$prompt\n"
   "Command to find the value of the current S prompt.")
 
-(defvar S-temp-buffer-p nil
-  "*Flags whether the current buffer is a temporary buffer created by S-mode.
-Such buffers will be killed by \\[S-quit] or \\[S-cleanup].
+(defvar rb-temp-buffer-p nil
+  "*Flags whether the current buffer is a temporary buffer created by rb-mode.
+Such buffers will be killed by \\[rb-quit] or \\[rb-cleanup].
 Source buffers and help buffers have this flag set.
 This is a buffer-local variable.")
-(make-variable-buffer-local 'S-temp-buffer-p)
+(make-variable-buffer-local 'rb-temp-buffer-p)
 
-(defvar S-local-variables-string "
+(defvar rb-local-variables-string "
 
 # Local Variables:
 # mode:S
-# S-temp-buffer-p:t
+# rb-temp-buffer-p:t
 # End:
 ")
 
-(defvar S-style-alist 
-'((GNU (S-indent-level . 2)
-       (S-continued-statement-offset . 2)
-       (S-brace-offset . 0)
-       (S-arg-function-offset . 4)
-       (S-expression-offset . 2))
-  (BSD (S-indent-level . 8)
-       (S-continued-statement-offset . 8)
-       (S-brace-offset . -8)
-       (S-arg-function-offset . 0)
-       (S-expression-offset . 8))
-  (K&R (S-indent-level . 5)
-       (S-continued-statement-offset . 5)
-       (S-brace-offset . -5)
-       (S-arg-function-offset . 0)
-       (S-expression-offset . 5))
-  (C++ (S-indent-level . 4)
-       (S-continued-statement-offset . 4)
-       (S-brace-offset . -4)
-       (S-arg-function-offset . 0)
-       (S-expression-offset . 4)))
+(defvar rb-style-alist 
+'((GNU (rb-indent-level . 2)
+       (rb-continued-statement-offset . 2)
+       (rb-brace-offset . 0)
+       (rb-arg-function-offset . 4)
+       (rb-expression-offset . 2))
+  (BSD (rb-indent-level . 8)
+       (rb-continued-statement-offset . 8)
+       (rb-brace-offset . -8)
+       (rb-arg-function-offset . 0)
+       (rb-expression-offset . 8))
+  (K&R (rb-indent-level . 5)
+       (rb-continued-statement-offset . 5)
+       (rb-brace-offset . -5)
+       (rb-arg-function-offset . 0)
+       (rb-expression-offset . 5))
+  (C++ (rb-indent-level . 4)
+       (rb-continued-statement-offset . 4)
+       (rb-brace-offset . -4)
+       (rb-arg-function-offset . 0)
+       (rb-expression-offset . 4)))
 "Predefined formatting styles for S code")
 
-(defvar S-tek-simple-prompt nil
+(defvar rb-tek-simple-prompt nil
   "Explicit version of primary S prompt.")
 
 
 
-;;; S-mode helper functions and code
+;;; rb-mode helper functions and code
 ;;;=====================================================
 ;;;
 
-(defvar inferior-S-mode-map nil)
-(if inferior-S-mode-map
+(defvar inferior-rb-mode-map nil)
+(if inferior-rb-mode-map
     nil
-  (setq inferior-S-mode-map (full-copy-sparse-keymap comint-mode-map))
-  (define-key inferior-S-mode-map "\r" 'inferior-S-send-input)
-  (define-key inferior-S-mode-map "\eP" 'comint-msearch-input)
-  (define-key inferior-S-mode-map "\eN" 'comint-psearch-input)
-  (define-key inferior-S-mode-map "\C-c\C-b" 'comint-msearch-input-matching)
-  (define-key inferior-S-mode-map "\eS" 'comint-next-similar-input)
-  (define-key inferior-S-mode-map "\er" 'comint-isearch)
-  (define-key inferior-S-mode-map "\C-c\C-l" 'S-load-file)
-  (define-key inferior-S-mode-map "\C-x`" 'S-parse-errors)
-  (define-key inferior-S-mode-map "\C-c\C-d" 'S-dump-object-into-edit-buffer)
-  (define-key inferior-S-mode-map "\C-c\C-h" 'S-display-help-on-object)
-  (define-key inferior-S-mode-map "\C-c\C-t" 'S-tek-mode-toggle)
-  (define-key inferior-S-mode-map "\C-c\C-q" 'S-quit)
-  (define-key inferior-S-mode-map "\C-c\C-e" 'S-execute)
-  (define-key inferior-S-mode-map "\C-c\C-s" 'S-execute-search)
-  (define-key inferior-S-mode-map "\C-c\C-x" 'S-execute-objects)
-  (define-key inferior-S-mode-map "\C-c\C-a" 'S-execute-attach)
-  (define-key inferior-S-mode-map "\C-c\C-z" 'S-abort)       ; these mask in
-  (define-key inferior-S-mode-map "\C-c\C-o" 'S-kill-output) ; comint-m-map
-  (define-key inferior-S-mode-map "\C-c\C-v" 'S-view-at-bottom)
-  (define-key inferior-S-mode-map "\t" 'S-complete-object-name)) 
+  (setq inferior-rb-mode-map (full-copy-sparse-keymap comint-mode-map))
+  (define-key inferior-rb-mode-map "\r" 'inferior-rb-send-input)
+  (define-key inferior-rb-mode-map "\eP" 'comint-msearch-input)
+  (define-key inferior-rb-mode-map "\eN" 'comint-psearch-input)
+  (define-key inferior-rb-mode-map "\C-c\C-b" 'comint-msearch-input-matching)
+  (define-key inferior-rb-mode-map "\eS" 'comint-next-similar-input)
+  (define-key inferior-rb-mode-map "\er" 'comint-isearch)
+  (define-key inferior-rb-mode-map "\C-c\C-l" 'rb-load-file)
+  (define-key inferior-rb-mode-map "\C-x`" 'rb-parse-errors)
+  (define-key inferior-rb-mode-map "\C-c\C-d" 'rb-dump-object-into-edit-buffer)
+  (define-key inferior-rb-mode-map "\C-c\C-h" 'rb-display-help-on-object)
+  (define-key inferior-rb-mode-map "\C-c\C-t" 'rb-tek-mode-toggle)
+  (define-key inferior-rb-mode-map "\C-c\C-q" 'rb-quit)
+  (define-key inferior-rb-mode-map "\C-c\C-e" 'rb-execute)
+  (define-key inferior-rb-mode-map "\C-c\C-s" 'rb-execute-search)
+  (define-key inferior-rb-mode-map "\C-c\C-x" 'rb-execute-objects)
+  (define-key inferior-rb-mode-map "\C-c\C-a" 'rb-execute-attach)
+  (define-key inferior-rb-mode-map "\C-c\C-z" 'rb-abort)       ; these mask in
+  (define-key inferior-rb-mode-map "\C-c\C-o" 'rb-kill-output) ; comint-m-map
+  (define-key inferior-rb-mode-map "\C-c\C-v" 'rb-view-at-bottom)
+  (define-key inferior-rb-mode-map "\t" 'rb-complete-object-name)) 
 
-(defvar S-mode-syntax-table nil "Syntax table for S-mode.")
-(if S-mode-syntax-table
+(defvar rb-mode-syntax-table nil "Syntax table for rb-mode.")
+(if rb-mode-syntax-table
     nil
-  (setq S-mode-syntax-table (make-syntax-table c-mode-syntax-table))
-  (modify-syntax-entry ?# "<" S-mode-syntax-table)  ; now an open comment
-  (modify-syntax-entry ?\n ">" S-mode-syntax-table) ; close comment
-  (modify-syntax-entry ?_ "." S-mode-syntax-table)  
-  (modify-syntax-entry ?. "w" S-mode-syntax-table)  ; making S names same as
-  (modify-syntax-entry ?$ "w" S-mode-syntax-table)  ; words makes coding easier
-  (modify-syntax-entry ?* "." S-mode-syntax-table)
-  (modify-syntax-entry ?< "." S-mode-syntax-table)
-  (modify-syntax-entry ?> "." S-mode-syntax-table)
-  (modify-syntax-entry ?/ "." S-mode-syntax-table))
+  (setq rb-mode-syntax-table (make-syntax-table c-mode-syntax-table))
+  (modify-syntax-entry ?# "<" rb-mode-syntax-table)  ; now an open comment
+  (modify-syntax-entry ?\n ">" rb-mode-syntax-table) ; close comment
+  (modify-syntax-entry ?_ "." rb-mode-syntax-table)  
+  (modify-syntax-entry ?. "w" rb-mode-syntax-table)  ; making S names same as
+  (modify-syntax-entry ?$ "w" rb-mode-syntax-table)  ; words makes coding easier
+  (modify-syntax-entry ?* "." rb-mode-syntax-table)
+  (modify-syntax-entry ?< "." rb-mode-syntax-table)
+  (modify-syntax-entry ?> "." rb-mode-syntax-table)
+  (modify-syntax-entry ?/ "." rb-mode-syntax-table))
 
 
-(defvar inferior-S-mode-hook '()
+(defvar inferior-rb-mode-hook '()
   "*Hook for customizing inferior S mode.
-Called after inferior-S-mode is entered and variables have been initialised.")
+Called after inferior-rb-mode is entered and variables have been initialised.")
 
 
 ;;;
@@ -607,43 +607,43 @@ Called after inferior-S-mode is entered and variables have been initialised.")
 (defun S ()
   "Run an inferior S process, input and output via buffer *S*.
 If there is a process already running in *S*, just switch to that buffer.
-Takes the program name from the variable inferior-S-program.
-The S program name is used to make a symbol name such as `inferior-S-args'.
+Takes the program name from the variable inferior-rb-program.
+The S program name is used to make a symbol name such as `inferior-rb-args'.
 If that symbol is a variable its value is used as a string of arguments
 when invoking S.
 \(Type \\[describe-mode] in the process buffer for a list of commands.)"
   (interactive)
   (if (not (comint-check-proc "*S*"))
       (let* ((symbol-string
-              (concat "inferior-" inferior-S-program "-args"))
+              (concat "inferior-" inferior-rb-program "-args"))
              (switches-symbol (intern-soft symbol-string))
              (switches
               (if (and switches-symbol (boundp switches-symbol))
                   (symbol-value switches-symbol))))
-        (run-hooks 'S-pre-run-hook)
-	(if S-ask-for-S-directory (S-set-directory))
-	(if S-ask-about-display (S-set-display))
+        (run-hooks 'rb-pre-run-hook)
+	(if rb-ask-for-rb-directory (rb-set-directory))
+	(if rb-ask-about-display (rb-set-display))
 	(set-buffer
          (if switches
-             (inferior-S-make-comint switches)
-           (inferior-S-make-comint)))
-        (inferior-S-mode)
-        (inferior-S-wait-for-prompt)
+             (inferior-rb-make-comint switches)
+           (inferior-rb-make-comint)))
+        (inferior-rb-mode)
+        (inferior-rb-wait-for-prompt)
         (goto-char (point-max))
-	(setq S-sl-modtime-alist nil)
-	(S-tek-get-simple-prompt)
-	(S-get-search-list)))
+	(setq rb-sl-modtime-alist nil)
+	(rb-tek-get-simple-prompt)
+	(rb-get-search-list)))
   (switch-to-buffer "*S*"))
 
-(defun S-set-directory nil
-  "Interactively set S-directory."
-  (setq S-directory
+(defun rb-set-directory nil
+  "Interactively set rb-directory."
+  (setq rb-directory
 	(expand-file-name
 	 (file-name-as-directory
 	  (read-file-name
-	   "From which directory? " S-directory S-directory t)))))
+	   "From which directory? " rb-directory rb-directory t)))))
 
-(defun S-set-display nil
+(defun rb-set-display nil
   "Interactively set DISPLAY variable for S process"
   (let* ((matches (append (mapcar
 			   '(lambda (envelt)
@@ -665,51 +665,51 @@ when invoking S.
 		   initial)))))))
 
 ;;; define two commands consistent with other comint modes, run-s &
-;;; run-S.
-(fset 'run-s (fset 'run-S (symbol-function 'S)))
+;;; run-rb.
+(fset 'run-s (fset 'run-rb (symbol-function 'S)))
 
-(defun inferior-S-mode () 
+(defun inferior-rb-mode () 
   "Major mode for interacting with an inferior S process.  
 Runs an S interactive job as a subprocess of Emacs, with I/O through an
-Emacs buffer.  Variable inferior-S-program controls which S
+Emacs buffer.  Variable inferior-rb-program controls which S
 is run.
 
 Commands are sent to the S process by typing them, and pressing
-\\[inferior-S-send-input]. Pressing \\[S-complete-object-name] completes known
+\\[inferior-rb-send-input]. Pressing \\[rb-complete-object-name] completes known
 object names. Other keybindings for this mode are:
 
-\\{inferior-S-mode-map}
+\\{inferior-rb-mode-map}
 
-When editing S objects, the use of \\[S-load-file] is advocated.
-S-load-file keeps source files (if S-keep-dump-files is non-nil) in
-the directory specified by S-source-directory-generator, with the
-filename chosen according to S-dump-filename-template. When a file is
-loaded, S-mode parses error messages and jumps to the appropriate file
-if errors occur. The S-eval- commands do not do this.
+When editing S objects, the use of \\[rb-load-file] is advocated.
+rb-load-file keeps source files (if rb-keep-dump-files is non-nil) in
+the directory specified by rb-source-directory-generator, with the
+filename chosen according to rb-dump-filename-template. When a file is
+loaded, rb-mode parses error messages and jumps to the appropriate file
+if errors occur. The rb-eval- commands do not do this.
 
 Customization: Entry to this mode runs the hooks on comint-mode-hook and
-inferior-S-mode-hook (in that order).
+inferior-rb-mode-hook (in that order).
 
 You can send text to the inferior S process from other buffers containing
 S source. The key bindings of these commands can be found by typing 
 ^h m (help for mode) in the other buffers.
-    S-eval-region sends the current region to the S process.
-    S-eval-buffer sends the current buffer to the S process.
-    S-eval-function sends the current function to the S process.
-    S-eval-line sends the current line to the S process.
-    S-beginning-of-function and S-end-of-function move the point to
+    rb-eval-region sends the current region to the S process.
+    rb-eval-buffer sends the current buffer to the S process.
+    rb-eval-function sends the current function to the S process.
+    rb-eval-line sends the current line to the S process.
+    rb-beginning-of-function and rb-end-of-function move the point to
         the beginning and end of the current S function.
-    S-switch-to-S switches the current buffer to the S process buffer.
-    S-switch-to-end-of-S switches the current buffer to the S process
+    rb-switch-to-rb switches the current buffer to the S process buffer.
+    rb-switch-to-end-of-rb switches the current buffer to the S process
         buffer and puts point at the end of it.
 
-    S-eval-region-and-go, S-eval-buffer-and-go,
-        S-eval-function-and-go, and S-eval-line-and-go switch to the S
+    rb-eval-region-and-go, rb-eval-buffer-and-go,
+        rb-eval-function-and-go, and rb-eval-line-and-go switch to the S
         process buffer after sending their text.
 
-    S-dump-object-into-edit-buffer moves an S object into a temporary file
+    rb-dump-object-into-edit-buffer moves an S object into a temporary file
         and buffer for editing
-    S-load-file sources a file of commands to the S process.
+    rb-load-file sources a file of commands to the S process.
 
 Commands:
 Return after the end of the process' output sends the text from the 
@@ -723,23 +723,23 @@ If you accidentally suspend your process, use \\[comint-continue-subjob]
 to continue it."
   (interactive)
   (comint-mode)
-  (setq comint-prompt-regexp (concat "^" inferior-S-prompt))
-  (setq major-mode 'inferior-S-mode)
+  (setq comint-prompt-regexp (concat "^" inferior-rb-prompt))
+  (setq major-mode 'inferior-rb-mode)
   (setq mode-name "Inferior S")
   (setq mode-line-process '(": %s"))
-  (use-local-map inferior-S-mode-map)
-  (set-syntax-table S-mode-syntax-table)
-  (setq comint-input-sentinel 'S-search-path-tracker)
-  (setq comint-get-old-input 'inferior-S-get-old-input)
+  (use-local-map inferior-rb-mode-map)
+  (set-syntax-table rb-mode-syntax-table)
+  (setq comint-input-sentinel 'rb-search-path-tracker)
+  (setq comint-get-old-input 'inferior-rb-get-old-input)
   (make-local-variable 'scroll-step)
   (setq scroll-step 4)
   (make-local-variable 'input-ring-size)
   (setq input-ring-size 50)
-  (run-hooks 'inferior-S-mode-hook))
+  (run-hooks 'inferior-rb-mode-hook))
 
 ;;; This function is a modification of make-comint from the comint.el
 ;;; code of Olin Shivers.
-(defun inferior-S-make-comint (&rest switches)
+(defun inferior-rb-make-comint (&rest switches)
   (let* ((name "S")
          (buffer (get-buffer-create (concat "*" name "*")))
          (proc (get-buffer-process buffer)))
@@ -748,42 +748,42 @@ to continue it."
     (cond ((or (not proc) (not (memq (process-status proc) '(run stop))))
            (save-excursion
              (set-buffer buffer)
-             (setq default-directory S-directory)
+             (setq default-directory rb-directory)
              (comint-mode)) ; Install local vars, mode, keymap, ...
-           (comint-exec buffer name inferior-S-program nil switches)))
+           (comint-exec buffer name inferior-rb-program nil switches)))
     buffer))
 
-(defun inferior-S-send-input ()
+(defun inferior-rb-send-input ()
   "Sends the command on the current line to the S process."
   (interactive)
   (comint-send-input)
-  (if (and S-sp-change
-           (inferior-S-wait-for-prompt))
+  (if (and rb-sp-change
+           (inferior-rb-wait-for-prompt))
       (progn
-        (S-get-search-list)
-        (setq S-sp-change nil))
+        (rb-get-search-list)
+        (setq rb-sp-change nil))
     ;; Is this TEK graphics output?
-    (if S-tek-mode 
+    (if rb-tek-mode 
 	(progn
-	  (require 'S-tek)
-	  (S-tek-snarf-graphics)))))
+	  (require 'rb-tek)
+	  (rb-tek-snarf-graphics)))))
 
-(defun inferior-S-get-old-input ()
+(defun inferior-rb-get-old-input ()
   "Returns the S command surrounding point."
   (save-excursion
     (beginning-of-line)
-    (if (not (looking-at inferior-S-prompt))
-	(S-error "No command on this line."))
-    (if (looking-at inferior-S-primary-prompt) nil
-	(re-search-backward (concat "^" inferior-S-primary-prompt)))
+    (if (not (looking-at inferior-rb-prompt))
+	(rb-error "No command on this line."))
+    (if (looking-at inferior-rb-primary-prompt) nil
+	(re-search-backward (concat "^" inferior-rb-primary-prompt)))
     (comint-skip-prompt)
     (let (command
 	   (beg (point)))
       (end-of-line)
       (setq command (buffer-substring beg (point)))
       (forward-line 1)
-      (while (and (looking-at inferior-S-prompt) 
-		  (not (looking-at inferior-S-primary-prompt)))
+      (while (and (looking-at inferior-rb-prompt) 
+		  (not (looking-at inferior-rb-primary-prompt)))
 	;; looking at secondary prompt
 	(comint-skip-prompt)
 	(setq beg (point))
@@ -792,13 +792,13 @@ to continue it."
 	(forward-line 1))
       command)))
 
-(defun S-error (msg)
+(defun rb-error (msg)
   "Something bad has happened. Display the S buffer, and cause an error 
 displaying MSG."
   (display-buffer (process-buffer (get-process "S")))
   (error msg))
 		      
-(defun inferior-S-wait-for-prompt ()
+(defun inferior-rb-wait-for-prompt ()
   "Wait until the S process is ready for input."
   (let* ((cbuffer (current-buffer))
          (sprocess (get-process "S"))
@@ -808,32 +808,32 @@ displaying MSG."
     (set-buffer sbuffer)
     (while (progn
 	     (if (not (eq (process-status sprocess) 'run))
-		 (S-error "S process has died unexpectedly.")
-	       (if (> (setq timeout (1+ timeout)) S-loop-timeout)
-		   (S-error "Timeout waiting for prompt. Check inferior-S-prompt or S-loop-timeout."))
+		 (rb-error "S process has died unexpectedly.")
+	       (if (> (setq timeout (1+ timeout)) rb-loop-timeout)
+		   (rb-error "Timeout waiting for prompt. Check inferior-rb-prompt or rb-loop-timeout."))
 	       (accept-process-output)
 	       (goto-char (point-max))
 	       (beginning-of-line)
-	       (setq r (looking-at inferior-S-prompt))
+	       (setq r (looking-at inferior-rb-prompt))
 	       (not (or r (looking-at ".*\\?\\s *"))))))
     (goto-char (point-max))
     (set-buffer cbuffer)
     (symbol-value r)))
 
-(defun S-dump-object-into-edit-buffer (object)
+(defun rb-dump-object-into-edit-buffer (object)
   "Edit an S object in its own buffer.  Without a prefix argument,
-this simply finds the file pointed to by S-dump-filename. If this file
+this simply finds the file pointed to by rb-dump-filename. If this file
 does not exist, or if a prefix argument is given, a dump() command is
 sent to the S process to generate the source buffer."
-  (interactive (S-read-object-name "Object to edit: "))
-  (let* ((filename (concat (if S-source-directory-generator 
-			       (funcall S-source-directory-generator) 
-			     S-source-directory)
-			   (format S-dump-filename-template object)))
-         (complete-dump-command (format inferior-S-dump-command
+  (interactive (rb-read-object-name "Object to edit: "))
+  (let* ((filename (concat (if rb-source-directory-generator 
+			       (funcall rb-source-directory-generator) 
+			     rb-source-directory)
+			   (format rb-dump-filename-template object)))
+         (complete-dump-command (format inferior-rb-dump-command
                                         object filename))
 	 (old-buff (get-file-buffer filename)))
-    (if S-source-directory-generator
+    (if rb-source-directory-generator
 	(let ((the-dir (file-name-directory filename)))
 	  ;; If the directory doesn't exist, create if possible and approved.
 	  (if (not (file-writable-p filename)) ; Can't create file
@@ -843,8 +843,8 @@ sent to the S process to generate the source buffer."
 		       (y-or-n-p	; Approved
 			(format "Directory %s does not exist. Create it? " the-dir))) ; and we want to create it
 		  (make-directory (directory-file-name the-dir))
-		(setq filename (concat S-source-directory 
-				       (format S-dump-filename-template object)))))))
+		(setq filename (concat rb-source-directory 
+				       (format rb-dump-filename-template object)))))))
     ;; Try and find a buffer or filename before asking S
     (catch 'found-text
       (if (not current-prefix-arg)
@@ -857,46 +857,46 @@ sent to the S process to generate the source buffer."
 	    (find-file-other-window filename)
 	    (message "Read %s" filename)
 	    (throw 'found-text nil))))
-      (S-command complete-dump-command)
+      (rb-command complete-dump-command)
       (let ((old-buff (get-file-buffer filename)))
 	(if old-buff
 	    (kill-buffer old-buff)))	;make sure we start fresh
       ;; Generate a buffer with the dumped data
       (find-file-other-window filename)
-      (S-mode)
+      (rb-mode)
       (auto-save-mode 1)		; Auto save in this buffer
-      (setq S-temp-buffer-p t)		; Flag as a temp buffer
-      (if S-insert-function-templates
+      (setq rb-temp-buffer-p t)		; Flag as a temp buffer
+      (if rb-insert-function-templates
 	  (progn 
 	    (goto-char (point-max))
-	    (if (re-search-backward S-dumped-missing-re nil t)
-		(replace-match S-function-template t t))
+	    (if (re-search-backward rb-dumped-missing-re nil t)
+		(replace-match rb-function-template t t))
 	    (goto-char (point-min))))	;It might be nice to go between braces here
       ;; Insert the local variables stuff
       (save-excursion
 	(goto-char (point-max))
-	(insert S-local-variables-string)
-	(if S-keep-dump-files nil
+	(insert rb-local-variables-string)
+	(if rb-keep-dump-files nil
 	  (set-buffer-modified-p nil)))
       (message "Dumped in %s" filename)
-      (if S-keep-dump-files nil 
+      (if rb-keep-dump-files nil 
 	  (delete-file filename))) ; In case buffer is killed
-    (setq S-prev-load-dir/file
+    (setq rb-prb-load-dir/file
 	  (cons (file-name-directory filename)
 		(file-name-nondirectory filename)))))
 
-(defun S-read-object-name (p-string)
-  (let* ((default (S-read-object-name-default))
+(defun rb-read-object-name (p-string)
+  (let* ((default (rb-read-object-name-default))
          (prompt-string (if default
                             (format "%s(default %s) " p-string default)
                           p-string))
-         (S-object-list (S-get-object-list))
-         (spec (completing-read prompt-string S-object-list)))
+         (rb-object-list (rb-get-object-list))
+         (spec (completing-read prompt-string rb-object-list)))
     (list (cond
            ((string= spec "") default)
            (t spec)))))
 
-(defun S-read-object-name-default ()
+(defun rb-read-object-name-default ()
  (save-excursion
    ;; The following line circumvents an 18.57 bug in following-char
    (if (eobp) (backward-char 1)) ; Hopefully buffer is not empty!
@@ -909,7 +909,7 @@ sent to the S process to generate the source buffer."
 	  (beg (progn (backward-sexp 1) (point))))
        (buffer-substring beg end)))))
 
-(defun S-object-names (dir)
+(defun rb-object-names (dir)
   "Return alist of S object names in directory (or object) DIR"
   (if (string-match "^/" dir) 
       (mapcar 'list (directory-files dir))
@@ -920,7 +920,7 @@ sent to the S process to generate the source buffer."
       (save-excursion
 	(set-buffer tbuffer)
 	(buffer-flush-undo tbuffer)
-	(S-command (format inferior-S-names-command objname) tbuffer)
+	(rb-command (format inferior-rb-names-command objname) tbuffer)
 	(goto-char (point-min))
 	(if (not (looking-at "\\s-*\\[1\\]"))
 	    (setq names nil)
@@ -931,76 +931,76 @@ sent to the S process to generate the source buffer."
 	(kill-buffer tbuffer))
       (mapcar 'list names))))
 
-(defun S-resynch nil
-"Reread all directories/objects in S-search-list to form completions."
+(defun rb-resynch nil
+"Reread all directories/objects in rb-search-list to form completions."
  (interactive)
- (setq S-sl-modtime-alist nil)
- (S-get-search-list))
+ (setq rb-sl-modtime-alist nil)
+ (rb-get-search-list))
        
-(defun S-extract-onames-from-alist (dir) 
-"Extract the object names for directory (or object) DIR from S-sl-modtime-alist
+(defun rb-extract-onames-from-alist (dir) 
+"Extract the object names for directory (or object) DIR from rb-sl-modtime-alist
 generating a new set if the directory has been recently modified."
-  (let* ((assoc-res (assoc dir S-sl-modtime-alist))
+  (let* ((assoc-res (assoc dir rb-sl-modtime-alist))
 	 (data-cell (cdr assoc-res))
 	 (last-mtime (car data-cell))
-	 (new-mtime (S-dir-modtime dir))
+	 (new-mtime (rb-dir-modtime dir))
 	 (old-objs (cdr data-cell)))
     (if (equal new-mtime last-mtime) old-objs
       (setcar data-cell new-mtime)
-      (setcdr data-cell (S-object-names dir)))))
+      (setcdr data-cell (rb-object-names dir)))))
 
-(defun S-dir-modtime (dir)
+(defun rb-dir-modtime (dir)
 "Return the last modtime if dir is a directory, and nil otherwise."
 ;; Attached dataframes return a modtime of nil. It probably wouldn't be
 ;; too difficult to find the modtime of the actual object by searching for 
-;; it along S-search-list, but one hardly ever modifies dataframes after
+;; it along rb-search-list, but one hardly ever modifies dataframes after
 ;; they're attached, and I couldn't be bothered anyway.
   (if (string-match "^/" dir) 
       (nth 5 (file-attributes dir))))
 
-(defun S-get-search-list ()
+(defun rb-get-search-list ()
   "Get the list of directories and (recursive) objects that S searches
 when it looks for objects."
   (save-excursion
   (let ((tbuffer (generate-new-buffer "search-list"))
 	dir-assoc
         dir)
-    (setq S-search-list nil)
+    (setq rb-search-list nil)
     (buffer-flush-undo tbuffer)
     (set-buffer tbuffer)
-    (S-command inferior-S-search-list-command tbuffer)
+    (rb-command inferior-rb-search-list-command tbuffer)
     (goto-char (point-max))
     (while (re-search-backward "\"\\([^\"]*\\)\"" nil t)
       (setq dir (buffer-substring (match-beginning 1) (match-end 1)))
       (if (and (string-match "^[^/]" dir)
-	       (file-directory-p (concat S-directory dir)))
-          (setq dir (concat S-directory dir)))
-      (setq S-search-list (cons dir S-search-list))
-      (setq dir-assoc (assoc dir S-sl-modtime-alist))
+	       (file-directory-p (concat rb-directory dir)))
+          (setq dir (concat rb-directory dir)))
+      (setq rb-search-list (cons dir rb-search-list))
+      (setq dir-assoc (assoc dir rb-sl-modtime-alist))
       (if (not dir-assoc)
 	  (let (conselt)
 	    (setq conselt (cons dir
-				(cons (S-dir-modtime dir)
-				      (S-object-names dir))))
-	    (setq S-sl-modtime-alist (cons conselt S-sl-modtime-alist)))))
+				(cons (rb-dir-modtime dir)
+				      (rb-object-names dir))))
+	    (setq rb-sl-modtime-alist (cons conselt rb-sl-modtime-alist)))))
     (kill-buffer tbuffer))))
 
-(defun S-get-object-list ()
+(defun rb-get-object-list ()
   "Return the alist of current S object names."
 ;;; suitable for use with completing-read
-  (S-get-object-list-r S-search-list))
+  (rb-get-object-list-r rb-search-list))
 
-(defun S-get-object-list-r (s-list)
+(defun rb-get-object-list-r (s-list)
   "Return the alist of current S object names, recursive version.
-S-LIST is the search list of directories (or objects) for S." 
+rb-LIST is the search list of directories (or objects) for S." 
   (let* ((dir (car s-list))
          (dir-list (cdr s-list)))
     (if (null dir)
         nil
-      (append (S-extract-onames-from-alist dir)
-              (S-get-object-list-r dir-list)))))
+      (append (rb-extract-onames-from-alist dir)
+              (rb-get-object-list-r dir-list)))))
 
-(defun S-command (com &optional buf visible)
+(defun rb-command (com &optional buf visible)
   "Send the S process command COM and delete the output
 from the S process buffer.  If an optional second argument BUF exists
 save the output in that buffer. If optional third arg VISIBLE is
@@ -1017,9 +1017,9 @@ buffer."
     (setq point-holder (point-marker))
     (goto-char (marker-position (process-mark sprocess)))
     (beginning-of-line)
-    (if (looking-at inferior-S-primary-prompt) nil
+    (if (looking-at inferior-rb-primary-prompt) nil
       (goto-char (marker-position point-holder))
-      (S-error 
+      (rb-error 
        "S process not ready. Finish your command before trying again."))
     (if visible
 	(progn
@@ -1032,7 +1032,7 @@ buffer."
              (goto-char (marker-position (process-mark sprocess)))
              (beginning-of-line)
 	     (if (< (point) start-of-output) (goto-char start-of-output))
-	     (not (looking-at inferior-S-primary-prompt))))
+	     (not (looking-at inferior-rb-primary-prompt))))
     (if buf
         (append-to-buffer buf start-of-output (point)))
     (if visible (goto-char (marker-position (process-mark sprocess)))
@@ -1041,7 +1041,7 @@ buffer."
       (goto-char (marker-position point-holder)))
     (set-buffer cbuffer)))
 
-(defun S-eval-visibly (text &optional invisibly)
+(defun rb-eval-visibly (text &optional invisibly)
   "Evaluate TEXT in the S process buffer as if it had been typed in.
 If optional secod arg INVISIBLY is non-nil, don't echo commands. If 
 if is a string, just include that string.
@@ -1069,26 +1069,26 @@ Waits for prompt after each line of input, so won't break on large texts."
 	       (goto-char (marker-position (process-mark sprocess)))
 	       (beginning-of-line)
 	       (if (< (point) start-of-output) (goto-char start-of-output))
-	       (not (looking-at inferior-S-prompt)))))
+	       (not (looking-at inferior-rb-prompt)))))
     (goto-char (marker-position (process-mark sprocess)))
     (set-buffer cbuffer)))
 
-(defun S-execute (command &optional invert buff message)
+(defun rb-execute (command &optional invert buff message)
   "Send a command to the S process.
 A newline is automatically added to COMMAND. Prefix arg (or second arg INVERT)
-means invert the meaning of S-execute-in-process-buffer. If INVERT is 'buffer,
+means invert the meaning of rb-execute-in-process-buffer. If INVERT is 'buffer,
 output is forced to go to the process buffer.
 If the output is going to a buffer, name it *BUFF*. This buffer is erased
 before use. Optional fourth arg MESSAGE is text to print at the top of the
 buffer (defaults to the command if BUFF is not given.)"
   (interactive "sCommand: \nP")
   (let ((the-command (concat command "\n"))
-	(buff-name (concat "*" (or buff "S-output") "*"))
+	(buff-name (concat "*" (or buff "rb-output") "*"))
 	(in-pbuff (if invert (or (eq invert 'buffer) 
-				 (not S-execute-in-process-buffer))
-		    S-execute-in-process-buffer)))
+				 (not rb-execute-in-process-buffer))
+		    rb-execute-in-process-buffer)))
     (if in-pbuff 
-	(S-eval-visibly the-command)
+	(rb-eval-visibly the-command)
       (with-output-to-temp-buffer buff-name
 	(if message (princ message)
 	  (if buff nil
@@ -1096,62 +1096,62 @@ buffer (defaults to the command if BUFF is not given.)"
 	      ;; given a special name
 	    (princ "> ")
 	    (princ the-command)))
-	(S-command the-command (get-buffer buff-name) nil))
+	(rb-command the-command (get-buffer buff-name) nil))
       (save-excursion
 	(set-buffer (get-buffer buff-name))
-	(setq S-temp-buffer-p t)))))
+	(setq rb-temp-buffer-p t)))))
 
-(defun S-execute-in-tb nil
-  "Like S-execute, but always evaluates in temp buffer."
+(defun rb-execute-in-tb nil
+  "Like rb-execute, but always evaluates in temp buffer."
   (interactive)
-  (let ((S-execute-in-process-buffer nil))
-    (call-interactively 'S-execute)))
+  (let ((rb-execute-in-process-buffer nil))
+    (call-interactively 'rb-execute)))
 
-(defun S-execute-objects (posn)
+(defun rb-execute-objects (posn)
   "Send the objects() command to the S process.
 By default, gives the objects at position 1.
-A prefix argument toggles the meaning of S-execute-in-process-buffer.
+A prefix argument toggles the meaning of rb-execute-in-process-buffer.
 A prefix argument of 2 or more means get objects for that position.
 A negative prefix argument gets the objects for that position
-  and toggles S-execute-in-process-buffer as well."
+  and toggles rb-execute-in-process-buffer as well."
   (interactive "P")
   (let* ((num-arg (if (listp posn) 
 		      (if posn -1 1)
 		    (prefix-numeric-value posn)))
 	(the-posn (if (< num-arg 0) (- num-arg) num-arg))
 	(invert (< num-arg 0))
-	(the-command (format inferior-S-objects-command the-posn))
+	(the-command (format inferior-rb-objects-command the-posn))
 	(the-message (concat ">>> Position "
 			     the-posn
 			     " ("
-			     (nth (1- the-posn) S-search-list)
+			     (nth (1- the-posn) rb-search-list)
 			     ")\n")))
-    (S-execute the-command invert "S objects" the-message)))
+    (rb-execute the-command invert "S objects" the-message)))
 
-(defun S-execute-search (invert)
+(defun rb-execute-search (invert)
   "Send the search() command to the S process."
   (interactive "P")
-  (S-execute "search()" invert "S search list"))
+  (rb-execute "search()" invert "S search list"))
 
-(defun S-execute-attach (dir &optional posn)
+(defun rb-execute-attach (dir &optional posn)
   "Attach a directory in the S process with the attach() command.
 When used interactively, user is prompted for DIR to attach and
 prefix argument is used for POSN (or 2, if absent.) 
 Doesn't work for data frames."
   (interactive "DAttach directory: \nP")
-  (S-execute (concat "attach(\"" 
+  (rb-execute (concat "attach(\"" 
 		     (directory-file-name (expand-file-name dir))
 		     "\""
 		     (if posn (concat "," (prefix-numeric-value posn)))
 		     ")") 'buffer))
 
-(defun S-view-at-bottom ()
+(defun rb-view-at-bottom ()
   "Move to the end of the buffer, and place cursor on bottom line of window."
   (interactive)
   (goto-char (point-max))
   (recenter -1))
 
-(defun S-kill-output ()
+(defun rb-kill-output ()
   "Kill all output from last S command."
   ;; A version of comint-kill-output that doesn't nuke the prompt.
   (interactive)
@@ -1159,17 +1159,17 @@ Doesn't work for data frames."
 	(pmark (process-mark sprocess))
 	(oldpoint (point-marker)))
     (goto-char pmark)
-    (re-search-backward inferior-S-primary-prompt)
+    (re-search-backward inferior-rb-primary-prompt)
     (kill-region comint-last-input-end (point))
     (insert "*** output flushed ***\n")
     (goto-char oldpoint)
     (recenter -1)))
 
-(defun S-load-file (filename)
+(defun rb-load-file (filename)
   "Load an S source file into an inferior S process."
   (interactive (comint-get-source "Load S file: "
-                                  S-prev-load-dir/file
-                                  S-source-modes
+                                  rb-prb-load-dir/file
+                                  rb-source-modes
                                   nil))
   (catch 'give-up	       	; In case we don't want to load after all
     (let ((buff (get-file-buffer filename))
@@ -1177,12 +1177,12 @@ Doesn't work for data frames."
       (if buff		    	; Buffer exists
 	  (save-excursion
 	    (set-buffer buff)
-	    (setq tbuffer-p S-temp-buffer-p)
+	    (setq tbuffer-p rb-temp-buffer-p)
 	    (if (buffer-modified-p buff) ; Buff exists and has changed
 		;; save BUFF, but don't make a backup
 		;; if we're about to delete it
 		(if tbuffer-p		; i.e. a result from a dump command
-		    (save-buffer (if S-keep-dump-files 1 0))
+		    (save-buffer (if rb-keep-dump-files 1 0))
 		  ;; Better check if it's just any old buffer
 		  (if (y-or-n-p (format "Buffer %s modified. Save it? "
 					(buffer-name buff)))
@@ -1200,20 +1200,20 @@ Doesn't work for data frames."
 			(save-buffer 0))
 		    (message "No load performed.")
 		    (throw 'give-up nil))))))
-      (setq S-prev-load-dir/file
+      (setq rb-prb-load-dir/file
 	    (cons (file-name-directory filename)
 		  (file-name-nondirectory filename)))
-      (let ((errbuffer (get-buffer-create S-error-buffer-name)))
+      (let ((errbuffer (get-buffer-create rb-error-buffer-name)))
 	(save-excursion 
 	  (set-buffer errbuffer)
 	  (erase-buffer)
-	  (S-command (format inferior-S-load-command filename) errbuffer)
+	  (rb-command (format inferior-rb-load-command filename) errbuffer)
 	  (goto-char (point-max))
-	  (if (re-search-backward S-dump-error-re nil t)
+	  (if (re-search-backward rb-dump-error-re nil t)
 	      (progn
 		(message "Errors: Use %s to find error." 
 			 (substitute-command-keys 
-			  "\\<inferior-S-mode-map>\\[S-parse-errors]"))
+			  "\\<inferior-rb-mode-map>\\[rb-parse-errors]"))
 		;; This load failed, so set buffer as modified so the
 		;; user will be warned if he tries to kill it
 		(if buff
@@ -1221,15 +1221,15 @@ Doesn't work for data frames."
 		      (set-buffer buff)
 		      (set-buffer-modified-p t)))) 
 	    (message "Load successful.")
-	    (if (and tbuffer-p (not S-keep-dump-files)) 
+	    (if (and tbuffer-p (not rb-keep-dump-files)) 
 		(delete-file filename)))))))
-  (S-switch-to-S t))
+  (rb-switch-to-rb t))
 
-(defun S-parse-errors (showerr)
+(defun rb-parse-errors (showerr)
   "Jump to error in last loaded S source file.
 With prefix argument, only shows the errors S reported."
   (interactive "P")
-  (let ((errbuff (get-buffer S-error-buffer-name)))
+  (let ((errbuff (get-buffer rb-error-buffer-name)))
     (if (not errbuff)
 	(error "You need to do a load first!")
       (set-buffer errbuff)
@@ -1249,7 +1249,7 @@ With prefix argument, only shows the errors S reported."
 		(setq fbuffer (find-file-noselect filename))
 		(save-excursion
 		  (set-buffer fbuffer)
-		  (S-mode))) 
+		  (rb-mode))) 
 	      (pop-to-buffer fbuffer)
 	      (goto-line linenum))
 	    (princ errmess t))
@@ -1257,26 +1257,26 @@ With prefix argument, only shows the errors S reported."
 	(display-buffer errbuff)))))
 
       
-(defun S-search-path-tracker (str)
+(defun rb-search-path-tracker (str)
   "Check if input STR changed the search path."
 ;;; This function monitors user input to the inferior S process so that
-;;; emacs can keep the S-search-list up to date.  Completing-read uses this
+;;; emacs can keep the rb-search-list up to date.  Completing-read uses this
 ;;; list indirectly when it prompts for help or for an object to dump.
-  (if (string-match S-change-sp-regexp str)
-      (setq S-sp-change t)))
+  (if (string-match rb-change-sp-regexp str)
+      (setq rb-sp-change t)))
 
-(defun S-cleanup ()
-  "Delete all of S-mode's temporary buffers and files
-(if S-keep-dump-files is nil) leaving you in the S process buffer.
+(defun rb-cleanup ()
+  "Delete all of rb-mode's temporary buffers and files
+(if rb-keep-dump-files is nil) leaving you in the S process buffer.
 Auto-save files and S help buffers are also deleted. Buffers whose
 contents do not match with S's idea of the objects value *usually*
 have the modified flag set, and you will be warned before such buffers
 are killed. The exception to this is buffers which were saved in a
-previous session before being loaded into S, and then read this
+prbious session before being loaded into S, and then read this
 session.
 
 It's a good idea to run this before you quit. It is run automatically by 
-\\[S-quit]."
+\\[rb-quit]."
   (interactive)
   (if (yes-or-no-p "Delete all temporary files and buffers? ")
       (progn
@@ -1284,11 +1284,11 @@ It's a good idea to run this before you quit. It is run automatically by
 		   (set-buffer buf)
 		   (let ((fname (buffer-file-name buf))
 			 (asfnm buffer-auto-save-file-name))
-		     (if S-temp-buffer-p
+		     (if rb-temp-buffer-p
 			 (progn
 			   (kill-buffer buf)
 			   (if (or (buffer-name buf)
-				   S-keep-dump-files)
+				   rb-keep-dump-files)
 			       ;; Don't do anything if buffer was not
 			       ;; killed or dump files are kept
 			       nil 
@@ -1301,24 +1301,24 @@ It's a good idea to run this before you quit. It is run automatically by
 			     (if (and asfnm (file-exists-p asfnm))
 				 (delete-file asfnm)))))))
 		(buffer-list))
-	(S-switch-to-S nil))))
+	(rb-switch-to-rb nil))))
 
-(defun S-quit ()
+(defun rb-quit ()
   "Issue the q() command to S, and clean up."
   (interactive)
   (let ((sprocess (get-process "S")))
     (if (not sprocess) (error "No S process running."))
     (if (yes-or-no-p "Really quit from S? ")
 	(save-excursion 
-	  (S-cleanup)
-	  (S-switch-to-S nil)
+	  (rb-cleanup)
+	  (rb-switch-to-rb nil)
 	  (goto-char (marker-position (process-mark sprocess)))
 	  (insert "q()\n")
 	  (process-send-string sprocess "q()\n")))))
 
-(defun S-abort ()
+(defun rb-abort ()
   "Kill the S process, without executing .Last or terminating devices.
-If you want to finish your session, use \\[S-quit] instead."
+If you want to finish your session, use \\[rb-quit] instead."
 ;;; Provided as a safety measure over the default binding of C-c C-z in 
 ;;; comint-mode-map. 
   (interactive)
@@ -1335,30 +1335,30 @@ If you want to finish your session, use \\[S-quit] instead."
 ;;; Tek terminal Graphics support
 ;;;
 
-(defun S-tek-mode-toggle nil
-  "Toggle S-tek-mode.
-Resets the S-tek-simple-prompt when S-tek-mode is turned on."
+(defun rb-tek-mode-toggle nil
+  "Toggle rb-tek-mode.
+Resets the rb-tek-simple-prompt when rb-tek-mode is turned on."
   (interactive)
-  (message (if (setq S-tek-mode (not S-tek-mode))
+  (message (if (setq rb-tek-mode (not rb-tek-mode))
 	       "Tek mode is now ON." 
 	     "Tek mode is now OFF."))
-  (if S-tek-mode (S-tek-get-simple-prompt)))
+  (if rb-tek-mode (rb-tek-get-simple-prompt)))
 
-(defun S-tek-get-simple-prompt nil
+(defun rb-tek-get-simple-prompt nil
   "Find the exact version of the current prompt."
   (interactive)
-  (let ((tbuffer (generate-new-buffer "*S-exact-prompt*")))
+  (let ((tbuffer (generate-new-buffer "*rb-exact-prompt*")))
     (buffer-flush-undo tbuffer)
     (set-buffer tbuffer)
-    (S-command inferior-S-get-prompt-command tbuffer)
+    (rb-command inferior-rb-get-prompt-command tbuffer)
     (goto-char (point-max))
     (re-search-backward "\"\\([^\"]*\\)\"" nil t)
-    (setq S-tek-simple-prompt
+    (setq rb-tek-simple-prompt
 	  (buffer-substring (match-beginning 1) (match-end 1)))
     (kill-buffer tbuffer)))
 
 ;;; 25/6/92 dsmith
-;;; Rest of code moved to S-tek.el
+;;; Rest of code moved to rb-tek.el
 
 
 
@@ -1366,64 +1366,64 @@ Resets the S-tek-simple-prompt when S-tek-mode is turned on."
 ;;;======================================================
 ;;;
 
-(defvar S-mode-map nil)
-(if S-mode-map
+(defvar rb-mode-map nil)
+(if rb-mode-map
     nil
-  (setq S-mode-map (make-sparse-keymap))
-  (define-key S-mode-map "\C-c\C-r"    'S-eval-region)
-  (define-key S-mode-map "\C-c\M-r" 'S-eval-region-and-go)
-  (define-key S-mode-map "\C-c\C-b"    'S-eval-buffer)
-  (define-key S-mode-map "\C-c\M-b" 'S-eval-buffer-and-go)
-  (define-key S-mode-map "\C-c\C-f"    'S-eval-function)
-  (define-key S-mode-map "\C-c\M-f" 'S-eval-function-and-go)
-  (define-key S-mode-map "\M-\C-x"  'S-eval-function)
-  (define-key S-mode-map "\C-c\C-n"     'S-eval-line-and-next-line)
-  (define-key S-mode-map "\C-c\C-j"    'S-eval-line)
-  (define-key S-mode-map "\C-c\M-j" 'S-eval-line-and-go)
-  (define-key S-mode-map "\M-\C-a"  'S-beginning-of-function)
-  (define-key S-mode-map "\M-\C-e"  'S-end-of-function)
-  (define-key S-mode-map "\C-c\C-y"    'S-switch-to-S)
-  (define-key S-mode-map "\C-c\C-z" 'S-switch-to-end-of-S)
-  (define-key S-mode-map "\C-c\C-l"    'S-load-file)
-  (define-key S-mode-map "\C-c\C-h"    'S-display-help-on-object)
-  (define-key S-mode-map "\C-c\C-d" 'S-dump-object-into-edit-buffer)
-  (define-key S-mode-map "\C-c\C-e" 'S-execute-in-tb)
-  (define-key S-mode-map "\M-\t"    'S-complete-object-name)
-  (define-key S-mode-map "{" 'S-electric-brace)
-  (define-key S-mode-map "}" 'S-electric-brace)
-  (define-key S-mode-map "\e\C-h" 'S-mark-function)
-  (define-key S-mode-map "\e\C-q" 'S-indent-exp)
-  (define-key S-mode-map "\177" 'backward-delete-char-untabify)
-  (define-key S-mode-map "\t" 'S-indent-command)
+  (setq rb-mode-map (make-sparse-keymap))
+  (define-key rb-mode-map "\C-c\C-r"    'rb-eval-region)
+  (define-key rb-mode-map "\C-c\M-r" 'rb-eval-region-and-go)
+  (define-key rb-mode-map "\C-c\C-b"    'rb-eval-buffer)
+  (define-key rb-mode-map "\C-c\M-b" 'rb-eval-buffer-and-go)
+  (define-key rb-mode-map "\C-c\C-f"    'rb-eval-function)
+  (define-key rb-mode-map "\C-c\M-f" 'rb-eval-function-and-go)
+  (define-key rb-mode-map "\M-\C-x"  'rb-eval-function)
+  (define-key rb-mode-map "\C-c\C-n"     'rb-eval-line-and-next-line)
+  (define-key rb-mode-map "\C-c\C-j"    'rb-eval-line)
+  (define-key rb-mode-map "\C-c\M-j" 'rb-eval-line-and-go)
+  (define-key rb-mode-map "\M-\C-a"  'rb-beginning-of-function)
+  (define-key rb-mode-map "\M-\C-e"  'rb-end-of-function)
+  (define-key rb-mode-map "\C-c\C-y"    'rb-switch-to-rb)
+  (define-key rb-mode-map "\C-c\C-z" 'rb-switch-to-end-of-rb)
+  (define-key rb-mode-map "\C-c\C-l"    'rb-load-file)
+  (define-key rb-mode-map "\C-c\C-h"    'rb-display-help-on-object)
+  (define-key rb-mode-map "\C-c\C-d" 'rb-dump-object-into-edit-buffer)
+  (define-key rb-mode-map "\C-c\C-e" 'rb-execute-in-tb)
+  (define-key rb-mode-map "\M-\t"    'rb-complete-object-name)
+  (define-key rb-mode-map "{" 'rb-electric-brace)
+  (define-key rb-mode-map "}" 'rb-electric-brace)
+  (define-key rb-mode-map "\e\C-h" 'rb-mark-function)
+  (define-key rb-mode-map "\e\C-q" 'rb-indent-exp)
+  (define-key rb-mode-map "\177" 'backward-delete-char-untabify)
+  (define-key rb-mode-map "\t" 'rb-indent-command)
 )
 
-(defun S-mode ()
+(defun rb-mode ()
   "Major mode for editing S source.
 
-\\{S-mode-map}
+\\{rb-mode-map}
 
-Customization: Entry to this mode runs the hooks in S-mode-hook.
+Customization: Entry to this mode runs the hooks in rb-mode-hook.
 
 You can send text to the inferior S process from other buffers containing
 S source.
-    S-eval-region sends the current region to the S process.
-    S-eval-buffer sends the current buffer to the S process.
-    S-eval-function sends the current function to the S process.
-    S-eval-line sends the current line to the S process.
-    S-beginning-of-function and S-end-of-function move the point to
+    rb-eval-region sends the current region to the S process.
+    rb-eval-buffer sends the current buffer to the S process.
+    rb-eval-function sends the current function to the S process.
+    rb-eval-line sends the current line to the S process.
+    rb-beginning-of-function and rb-end-of-function move the point to
         the beginning and end of the current S function.
-    S-switch-to-S switches the current buffer to the S process buffer.
-    S-switch-to-end-of-S switches the current buffer to the S process
+    rb-switch-to-rb switches the current buffer to the S process buffer.
+    rb-switch-to-end-of-rb switches the current buffer to the S process
         buffer and puts point at the end of it.
 
-    S-eval-region-and-go, S-eval-buffer-and-go,
-        S-eval-function-and-go, and S-eval-line-and-go switch to the S
+    rb-eval-region-and-go, rb-eval-buffer-and-go,
+        rb-eval-function-and-go, and rb-eval-line-and-go switch to the S
         process buffer after sending their text.
 
-    S-load-file sources a file of commands to the S process.
-    S-make-function inserts a function template in the buffer.
+    rb-load-file sources a file of commands to the S process.
+    rb-make-function inserts a function template in the buffer.
 
-\\[S-indent-command] indents for S code. 
+\\[rb-indent-command] indents for S code. 
 \\[backward-delete-char-untabify] converts tabs to spaces as it moves back.
 Comments are indented in a similar way to Emacs-lisp mode:
        `###'     beginning of line
@@ -1433,49 +1433,49 @@ Comments are indented in a similar way to Emacs-lisp mode:
                  \\[indent-for-comment] command automatically inserts such a
                  `#' in the right place, or aligns such a comment if it is 
                  already inserted.
-\\[S-indent-exp] command indents each line of the S grouping following point.
+\\[rb-indent-exp] command indents each line of the S grouping following point.
 
 Variables controlling indentation style:
- S-tab-always-indent
+ rb-tab-always-indent
     Non-nil means TAB in S mode should always reindent the current line,
     regardless of where in the line point is when the TAB command is used.
- S-auto-newline
+ rb-auto-newline
     Non-nil means automatically newline before and after braces inserted in S 
     code.
- S-indent-level
+ rb-indent-level
     Indentation of S statements within surrounding block.
     The surrounding block's indentation is the indentation of the line on 
     which the open-brace appears.
- S-continued-statement-offset
+ rb-continued-statement-offset
     Extra indentation given to a substatement, such as the then-clause of an 
     if or body of a while.
- S-continued-brace-offset
+ rb-continued-brace-offset
     Extra indentation given to a brace that starts a substatement.
-    This is in addition to S-continued-statement-offset.
- S-brace-offset
+    This is in addition to rb-continued-statement-offset.
+ rb-brace-offset
     Extra indentation for line if it starts with an open brace.
- S-arg-function-offset 
+ rb-arg-function-offset 
     Extra indent for internal substatements of function `foo' that called
     in `arg=foo(...)' form. 
    If not number, the statements are indented at open-parenthesis following 
    `foo'.
- S-expression-offset
+ rb-expression-offset
     Extra indent for internal substatements of `expression' that specified
     in `obj <- expression(...)' form. 
     If not number, the statements are indented at open-parenthesis following 
     `expression'.
- S-brace-imaginary-offset
+ rb-brace-imaginary-offset
     An open brace following other text is treated as if it were
     this far to the right of the start of its line.
 
-Furthermore, \\[S-set-style] command enables you to set up predefined S-mode 
+Furthermore, \\[rb-set-style] command enables you to set up predefined rb-mode 
 indentation style. At present, predefined style are `BSD', `GNU', `K&R' `C++'
  (quoted from C language style)."
   (interactive)
-  (setq major-mode 'S-mode)
+  (setq major-mode 'rb-mode)
   (setq mode-name "S")
-  (use-local-map S-mode-map)
-  (set-syntax-table S-mode-syntax-table)
+  (use-local-map rb-mode-map)
+  (set-syntax-table rb-mode-syntax-table)
   (make-local-variable 'paragraph-start)
   (setq paragraph-start (concat "^$\\|" page-delimiter))
   (make-local-variable 'paragraph-separate)
@@ -1483,7 +1483,7 @@ indentation style. At present, predefined style are `BSD', `GNU', `K&R' `C++'
   (make-local-variable 'paragraph-ignore-fill-prefix)
   (setq paragraph-ignore-fill-prefix t)
   (make-local-variable 'indent-line-function)
-  (setq indent-line-function 'S-indent-line)
+  (setq indent-line-function 'rb-indent-line)
   (make-local-variable 'require-final-newline)
   (setq require-final-newline t)
   (make-local-variable 'comment-start)
@@ -1493,87 +1493,87 @@ indentation style. At present, predefined style are `BSD', `GNU', `K&R' `C++'
   (make-local-variable 'comment-column)
   (setq comment-column 40)
   (make-local-variable 'comment-indent-hook)
-  (setq comment-indent-hook 'S-comment-indent)
+  (setq comment-indent-hook 'rb-comment-indent)
   (make-local-variable 'parse-sexp-ignore-comments)
   (setq parse-sexp-ignore-comments nil)
-  (run-hooks 'S-mode-hook))
+  (run-hooks 'rb-mode-hook))
 
 ;;; Emacs will set the mode for a file based on the file's header.
 ;;; The mode name is indicated by putting it between -*- on the top line. 
 ;;; (Other commands can go here too, see an Emacs manual.)
 ;;; For a file you also load, you will want a leading # (comment to S)
 ;;; Emacs will downcase the name of the mode, e.g., S, so we must provide
-;;; s-mode in lower case too.  That is, "#-*-S-*-" invokes s-mode and not S-mode.
-(fset 's-mode 'S-mode)
+;;; s-mode in lower case too.  That is, "#-*-rb-*-" invokes s-mode and not rb-mode.
+(fset 's-mode 'rb-mode)
 
-(defun S-eval-region (start end toggle &optional message)
+(defun rb-eval-region (start end toggle &optional message)
   "Send the current region to the inferior S process.
-With prefix argument, toggle meaning of S-eval-visibly-p."
+With prefix argument, toggle meaning of rb-eval-visibly-p."
   (interactive "r\nP")
-  (let ((visibly (if toggle (not S-eval-visibly-p) S-eval-visibly-p)))
+  (let ((visibly (if toggle (not rb-eval-visibly-p) rb-eval-visibly-p)))
     (if visibly
-	(S-eval-visibly (buffer-substring start end))
-      (S-eval-visibly (buffer-substring start end)
+	(rb-eval-visibly (buffer-substring start end))
+      (rb-eval-visibly (buffer-substring start end)
 		      (or message "Eval region")))))
 
-(defun S-eval-region-and-go (start end vis)
+(defun rb-eval-region-and-go (start end vis)
   "Send the current region to the inferior S and switch to the process buffer.
-Arg has same meaning as for S-eval-region."
+Arg has same meaning as for rb-eval-region."
   (interactive "r\nP")
-  (S-eval-region start end vis)
-  (S-switch-to-S t))
+  (rb-eval-region start end vis)
+  (rb-switch-to-rb t))
 
-(defun S-eval-buffer (vis)
+(defun rb-eval-buffer (vis)
   "Send the current buffer to the inferior S process.
-Arg has same meaning as for S-eval-region."
+Arg has same meaning as for rb-eval-region."
   (interactive "P")
-  (S-eval-region (point-min) (point-max) vis "Eval buffer"))
+  (rb-eval-region (point-min) (point-max) vis "Eval buffer"))
 
-(defun S-eval-buffer-and-go (vis)
+(defun rb-eval-buffer-and-go (vis)
   "Send the current buffer to the inferior S and switch to the process buffer.
-Arg has same meaning as for S-eval-region."
+Arg has same meaning as for rb-eval-region."
   (interactive)
-  (S-eval-buffer vis)
-  (S-switch-to-S t))
+  (rb-eval-buffer vis)
+  (rb-switch-to-rb t))
 
-(defun S-eval-function (vis)
+(defun rb-eval-function (vis)
   "Send the current function to the inferior S process.
-Arg has same meaning as for S-eval-region."
+Arg has same meaning as for rb-eval-region."
   (interactive "P")
   (save-excursion
-    (S-end-of-function)
+    (rb-end-of-function)
     (let ((end (point)))
-      (S-beginning-of-function)
-      (princ (concat "Loading: " (S-extract-word-name)) t)
-      (S-eval-region (point) end vis 
-		     (concat "Eval function " (S-extract-word-name))))))
+      (rb-beginning-of-function)
+      (princ (concat "Loading: " (rb-extract-word-name)) t)
+      (rb-eval-region (point) end vis 
+		     (concat "Eval function " (rb-extract-word-name))))))
 
-(defun S-eval-function-and-go (vis)
+(defun rb-eval-function-and-go (vis)
   "Send the current function to the inferior S process and switch to
-the process buffer. Arg has same meaning as for S-eval-region."
+the process buffer. Arg has same meaning as for rb-eval-region."
   (interactive "P")
-  (S-eval-function vis)
-  (S-switch-to-S t))
+  (rb-eval-function vis)
+  (rb-switch-to-rb t))
 
-(defun S-eval-line (vis)
+(defun rb-eval-line (vis)
   "Send the current line to the inferior S process.
-Arg has same meaning as for S-eval-region."
+Arg has same meaning as for rb-eval-region."
   (interactive "P")
   (save-excursion
     (end-of-line)
     (let ((end (point)))
       (beginning-of-line)
-      (princ (concat "Loading line: " (S-extract-word-name) " ...") t)
-      (S-eval-region (point) end vis "Eval line"))))
+      (princ (concat "Loading line: " (rb-extract-word-name) " ...") t)
+      (rb-eval-region (point) end vis "Eval line"))))
 
-(defun S-eval-line-and-go (vis)
+(defun rb-eval-line-and-go (vis)
   "Send the current line to the inferior S process and switch to the
-process buffer. Arg has same meaning as for S-eval-region."
+process buffer. Arg has same meaning as for rb-eval-region."
   (interactive "P")
-  (S-eval-line vis)
-  (S-switch-to-S t))
+  (rb-eval-line vis)
+  (rb-switch-to-rb t))
 
-(defun S-eval-line-and-next-line ()
+(defun rb-eval-line-and-next-line ()
   "Evaluate the current line visibly and move to the next line."
   ;; From an idea by Rod Ball (rod@marcam.dsir.govt.nz)
   (interactive)
@@ -1581,10 +1581,10 @@ process buffer. Arg has same meaning as for S-eval-region."
     (end-of-line)
     (let ((end (point)))
       (beginning-of-line)
-      (S-eval-visibly (buffer-substring (point) end))))
+      (rb-eval-visibly (buffer-substring (point) end))))
   (next-line 1))
 
-(defun S-beginning-of-function nil
+(defun rb-beginning-of-function nil
   "Leave the point at the beginning of the current S function."
   (interactive)
   (let ((init-point (point))
@@ -1593,7 +1593,7 @@ process buffer. Arg has same meaning as for S-eval-region."
     ;; in case we're sitting in a function header
     (while (not done)
       (if 
-	  (re-search-backward S-function-pattern (point-min) t)
+	  (re-search-backward rb-function-pattern (point-min) t)
 	  nil
 	(goto-char init-point)
 	(error "Point is not in a function."))
@@ -1605,21 +1605,21 @@ process buffer. Arg has same meaning as for S-eval-region."
       ;; current function must begin and end around point  
       (setq done (and (>= end init-point) (<= beg init-point))))))
 
-(defun S-end-of-function nil
+(defun rb-end-of-function nil
   "Leave the point at the end of the current S function."
   (interactive)
-  (S-beginning-of-function)
+  (rb-beginning-of-function)
   (forward-list 1) ; get over arguments
   (forward-sexp 1) ; move over braces
   )
 
-(defun S-extract-word-name ()
+(defun rb-extract-word-name ()
   "Get the word you're on."
   (save-excursion
     (re-search-forward "\\<\\w+\\>" nil t)
     (buffer-substring (match-beginning 0) (match-end 0))))
 
-(defun S-switch-to-S (eob-p)
+(defun rb-switch-to-rb (eob-p)
   "Switch to the inferior S process buffer.
 With argument, positions cursor at end of buffer."
   (interactive "P")
@@ -1631,29 +1631,29 @@ With argument, positions cursor at end of buffer."
          (message "No inferior S process")
          (ding))))
 
-(defun S-switch-to-end-of-S nil
+(defun rb-switch-to-end-of-rb nil
   "Switch to the end of the inferior S process buffer."
   (interactive)
-  (S-switch-to-S t))
+  (rb-switch-to-rb t))
 
-(defun S-make-function ()
+(defun rb-make-function ()
   "Insert a function template."
   (interactive)
   (insert "fu <- function()\n{\n\t\n}\n")
   (forward-line -2)
   (end-of-line))
 
-(defun S-complete-object-name (&optional listcomp)
+(defun rb-complete-object-name (&optional listcomp)
   ;;Based on lisp-complete-symbol
   "Perform completion on S object preceding point.  The object is
-compared against those objects known by S-get-object-list and any
+compared against those objects known by rb-get-object-list and any
 additional characters up to ambiguity are inserted.  Completion only
 works on globally-known objects (including elements of attached data
 frames), and thus is most suitable for interactive command-line entry,
 and not so much for function editing since local objects (e.g.
 argument names) aren't known.
 
-Use \\[S-resynch] to re-read the names of the attached directories.
+Use \\[rb-resynch] to re-read the names of the attached directories.
 This is done automatically (and transparently) if a directory is
 modified, so the most up-to-date list of object names is always
 available. However attached dataframes are *not* updated, so this
@@ -1670,7 +1670,7 @@ indent-for-tab-command is run."
 	     (buffer-syntax (syntax-table))
 	     (beg (unwind-protect
 		      (save-excursion
-			(set-syntax-table S-mode-syntax-table)
+			(set-syntax-table rb-mode-syntax-table)
 			(backward-sexp 1)
 			(point))
 		    (set-syntax-table buffer-syntax)))
@@ -1691,8 +1691,8 @@ indent-for-tab-command is run."
 	     (completion (try-completion pattern
 					 (if listname
 					     (setq components
-						   (S-object-names listname))
-					   (S-get-object-list)))))
+						   (rb-object-names listname))
+					   (rb-get-object-list)))))
 	(if listcomp (setq completion full-prefix))
 	(cond ((eq completion t)
 	       (message "[sole completion]"))
@@ -1708,7 +1708,7 @@ indent-for-tab-command is run."
 	       (message "Making completion list...")
 	       (let ((list (all-completions pattern
 					    (if listname components
-					      (S-get-object-list)))))
+					      (rb-get-object-list)))))
 		 (with-output-to-temp-buffer " *Completions*"
 		   (display-completion-list list)))
 	       (message "Making completion list...%s" "done"))))
@@ -1716,17 +1716,17 @@ indent-for-tab-command is run."
 
 ;;; S code formatting functions
 
-(defun S-comment-indent ()
+(defun rb-comment-indent ()
   (if (looking-at "###")
       (current-column)
     (if (looking-at "##")
-	(let ((tem (S-calculate-indent)))
+	(let ((tem (rb-calculate-indent)))
 	  (if (listp tem) (car tem) tem))
       (skip-chars-backward " \t")
       (max (if (bolp) 0 (1+ (current-column)))
 	   comment-column))))
 
-(defun S-electric-brace (arg)
+(defun rb-electric-brace (arg)
   "Insert character and correct line's indentation."
   (interactive "P")
   (let (insertpos)
@@ -1735,16 +1735,16 @@ indent-for-tab-command is run."
 	     (or (save-excursion
 		   (skip-chars-backward " \t")
 		   (bolp))
-		 (if S-auto-newline (progn (S-indent-line) (newline) t) nil)))
+		 (if rb-auto-newline (progn (rb-indent-line) (newline) t) nil)))
 	(progn
 	  (insert last-command-char)
-	  (S-indent-line)
-	  (if S-auto-newline
+	  (rb-indent-line)
+	  (if rb-auto-newline
 	      (progn
 		(newline)
 		;; (newline) may have done auto-fill
 		(setq insertpos (- (point) 2))
-		(S-indent-line)))
+		(rb-indent-line)))
 	  (save-excursion
 	    (if insertpos (goto-char (1+ insertpos)))
 	    (delete-char -1))))
@@ -1754,9 +1754,9 @@ indent-for-tab-command is run."
 	  (self-insert-command (prefix-numeric-value arg)))
       (self-insert-command (prefix-numeric-value arg)))))
 
-(defun S-indent-command (&optional whole-exp)
+(defun rb-indent-command (&optional whole-exp)
   "Indent current line as S code, or in some cases insert a tab character.
-If S-tab-always-indent is non-nil (the default), always indent current line.
+If rb-tab-always-indent is non-nil (the default), always indent current line.
 Otherwise, indent the current line only if point is at the left margin
 or in the line's indentation; otherwise insert a tab.
 
@@ -1768,10 +1768,10 @@ The relative indentation among the lines of the expression are preserved."
   (if whole-exp
       ;; If arg, always indent this line as S
       ;; and shift remaining lines of expression the same amount.
-      (let ((shift-amt (S-indent-line))
+      (let ((shift-amt (rb-indent-line))
 	    beg end)
 	(save-excursion
-	  (if S-tab-always-indent
+	  (if rb-tab-always-indent
 	      (beginning-of-line))
 	  (setq beg (point))
 	  (backward-up-list 1)
@@ -1782,17 +1782,17 @@ The relative indentation among the lines of the expression are preserved."
 	  (setq beg (point)))
 	(if (> end beg)
 	    (indent-code-rigidly beg end shift-amt)))
-    (if (and (not S-tab-always-indent)
+    (if (and (not rb-tab-always-indent)
 	     (save-excursion
 	       (skip-chars-backward " \t")
 	       (not (bolp))))
 	(insert-tab)
-      (S-indent-line))))
+      (rb-indent-line))))
 
-(defun S-indent-line ()
+(defun rb-indent-line ()
   "Indent current line as S code.
 Return the amount the indentation changed by."
-  (let ((indent (S-calculate-indent nil))
+  (let ((indent (rb-calculate-indent nil))
 	beg shift-amt
 	(case-fold-search nil)
 	(pos (- (point-max) (point))))
@@ -1811,12 +1811,12 @@ Return the amount the indentation changed by."
 	     (cond ((and (looking-at "else\\b")
 			 (not (looking-at "else\\s_")))
 		    (setq indent (save-excursion
-				   (S-backward-to-start-of-if)
+				   (rb-backward-to-start-of-if)
 				   (current-indentation))))
 		   ((= (following-char) ?})
-		    (setq indent (- indent S-indent-level)))
+		    (setq indent (- indent rb-indent-level)))
 		   ((= (following-char) ?{)
-		    (setq indent (+ indent S-brace-offset)))))))
+		    (setq indent (+ indent rb-brace-offset)))))))
     (skip-chars-forward " \t")
     (setq shift-amt (- indent (current-column)))
     (if (zerop shift-amt)
@@ -1831,7 +1831,7 @@ Return the amount the indentation changed by."
 	  (goto-char (- (point-max) pos))))
     shift-amt))
 
-(defun S-calculate-indent (&optional parse-start)
+(defun rb-calculate-indent (&optional parse-start)
   "Return appropriate indentation for current line as S code.
 In usual case returns an integer: the column to indent to.
 Returns nil if line starts inside a string, t if in a comment."
@@ -1859,40 +1859,40 @@ Returns nil if line starts inside a string, t if in a comment."
 	     ;; indent to just after the surrounding open.
 	     (goto-char containing-sexp)
 	     (let ((bol (save-excursion (beginning-of-line) (point))))
-	       (cond ((and (numberp S-arg-function-offset)
+	       (cond ((and (numberp rb-arg-function-offset)
 			    (re-search-backward "=[ \t]*\\s\"*\\(\\w\\|\\s_\\)+\\s\"*[ \t]*" bol t))
 		      (forward-sexp -1)
-		      (+ (current-column) S-arg-function-offset))
-		     ((and (numberp S-expression-offset)
+		      (+ (current-column) rb-arg-function-offset))
+		     ((and (numberp rb-expression-offset)
 			   (re-search-backward "<-[ \t]*expression[ \t]*" bol t))
 		      (forward-sexp -1)
-		      (+ (current-column) S-expression-offset))
+		      (+ (current-column) rb-expression-offset))
 		     (t
 		      (progn (goto-char (1+ containing-sexp))
 			     (current-column))))))
 	    (t
 	     ;; Statement level.  Is it a continuation or a new statement?
-	     ;; Find previous non-comment character.
+	     ;; Find prbious non-comment character.
 	     (goto-char indent-point)
-	     (S-backward-to-noncomment containing-sexp)
+	     (rb-backward-to-noncomment containing-sexp)
 	     ;; Back up over label lines, since they don't
 	     ;; affect whether our line is a continuation.
 	     (while (eq (preceding-char) ?\,)
-	       (S-backward-to-start-of-continued-exp containing-sexp)
+	       (rb-backward-to-start-of-continued-exp containing-sexp)
 	       (beginning-of-line)
-	       (S-backward-to-noncomment containing-sexp))
+	       (rb-backward-to-noncomment containing-sexp))
 	     ;; Now we get the answer.
-	     (if (S-continued-statement-p)
+	     (if (rb-continued-statement-p)
 		 ;; This line is continuation of preceding line's statement;
-		 ;; indent  S-continued-statement-offset  more than the
-		 ;; previous line of the statement.
+		 ;; indent  rb-continued-statement-offset  more than the
+		 ;; prbious line of the statement.
 		 (progn
-		   (S-backward-to-start-of-continued-exp containing-sexp)
-		   (+ S-continued-statement-offset (current-column)
+		   (rb-backward-to-start-of-continued-exp containing-sexp)
+		   (+ rb-continued-statement-offset (current-column)
 		      (if (save-excursion (goto-char indent-point)
 					  (skip-chars-forward " \t")
 					  (eq (following-char) ?{))
-			  S-continued-brace-offset 0)))
+			  rb-continued-brace-offset 0)))
 	       ;; This line starts a new statement.
 	       ;; Position following last unclosed open.
 	       (goto-char containing-sexp)
@@ -1909,21 +1909,21 @@ Returns nil if line starts inside a string, t if in a comment."
 		   ;; if it is before the line we want to indent.
 		   (and (< (point) indent-point)
 			(current-column)))
-		 ;; If no previous statement,
+		 ;; If no prbious statement,
 		 ;; indent it relative to line brace is on.
 		 ;; For open brace in column zero, don't let statement
-		 ;; start there too.  If S-indent-level is zero,
-		 ;; use S-brace-offset + S-continued-statement-offset instead.
+		 ;; start there too.  If rb-indent-level is zero,
+		 ;; use rb-brace-offset + rb-continued-statement-offset instead.
 		 ;; For open-braces not the first thing in a line,
-		 ;; add in S-brace-imaginary-offset.
-		 (+ (if (and (bolp) (zerop S-indent-level))
-			(+ S-brace-offset S-continued-statement-offset)
-		      S-indent-level)
+		 ;; add in rb-brace-imaginary-offset.
+		 (+ (if (and (bolp) (zerop rb-indent-level))
+			(+ rb-brace-offset rb-continued-statement-offset)
+		      rb-indent-level)
 		    ;; Move back over whitespace before the openbrace.
 		    ;; If openbrace is not first nonwhite thing on the line,
-		    ;; add the S-brace-imaginary-offset.
+		    ;; add the rb-brace-imaginary-offset.
 		    (progn (skip-chars-backward " \t")
-			   (if (bolp) 0 S-brace-imaginary-offset))
+			   (if (bolp) 0 rb-brace-imaginary-offset))
 		    ;; If the openbrace is preceded by a parenthesized exp,
 		    ;; move to the beginning of that;
 		    ;; possibly a different line
@@ -1933,7 +1933,7 @@ Returns nil if line starts inside a string, t if in a comment."
 		      ;; Get initial indentation of the line we are on.
 		      (current-indentation))))))))))
 
-(defun S-continued-statement-p ()
+(defun rb-continued-statement-p ()
   (let ((eol (point)))
     (save-excursion
       (cond ((memq (preceding-char) '(nil ?\, ?\; ?\} ?\{ ?\]))
@@ -1958,7 +1958,7 @@ Returns nil if line starts inside a string, t if in a comment."
 			     (progn (backward-char 3)
 				    (looking-at "%[^ \t]%"))))))))))
 
-(defun S-backward-to-noncomment (lim)
+(defun rb-backward-to-noncomment (lim)
   (let (opoint stop)
     (while (not stop)
       (skip-chars-backward " \t\n\f" lim)
@@ -1969,7 +1969,7 @@ Returns nil if line starts inside a string, t if in a comment."
       (if stop (goto-char opoint)
 	(beginning-of-line)))))
 
-(defun S-backward-to-start-of-continued-exp (lim)
+(defun rb-backward-to-start-of-continued-exp (lim)
   (if (= (preceding-char) ?\))
       (forward-sexp -1))
   (beginning-of-line)
@@ -1977,7 +1977,7 @@ Returns nil if line starts inside a string, t if in a comment."
       (goto-char (1+ lim)))
   (skip-chars-forward " \t"))
 
-(defun S-backward-to-start-of-if (&optional limit)
+(defun rb-backward-to-start-of-if (&optional limit)
   "Move to the start of the last ``unbalanced'' if."
   (or limit (setq limit (save-excursion (beginning-of-defun) (point))))
   (let ((if-level 1)
@@ -1992,15 +1992,15 @@ Returns nil if line starts inside a string, t if in a comment."
 	     (setq if-level 0)
 	     (goto-char limit))))))
 
-(defun S-mark-function ()
+(defun rb-mark-function ()
   "Put mark at end of S function, point at beginning."
   (interactive)
   (push-mark (point))
-  (S-end-of-function)
+  (rb-end-of-function)
   (push-mark (point))
-  (S-beginning-of-function))
+  (rb-beginning-of-function))
 
-(defun S-indent-exp ()
+(defun rb-indent-exp ()
   "Indent each line of the S grouping following point."
   (interactive)
   (let ((indent-stack (list nil))
@@ -2032,9 +2032,9 @@ Returns nil if line starts inside a string, t if in a comment."
 		   (>= (car (cdr (cdr state))) 0))
 	      (setq last-sexp (car (cdr (cdr state)))))
 	  (if (or (nth 4 ostate))
-	      (S-indent-line))
+	      (rb-indent-line))
 	  (if (nth 4 state)
-	      (and (S-indent-line)
+	      (and (rb-indent-line)
 		   (setcar (nthcdr 4 state) nil)))
 	  (if (or (nth 3 state))
 	      (forward-line 1)
@@ -2077,34 +2077,34 @@ Returns nil if line starts inside a string, t if in a comment."
 		  (save-excursion
 		    (setq at-else (looking-at "else\\W"))
 		    (setq at-brace (= (following-char) ?{))
-		    (S-backward-to-noncomment opoint)
-		    (if (S-continued-statement-p)
+		    (rb-backward-to-noncomment opoint)
+		    (if (rb-continued-statement-p)
 			;; Preceding line did not end in comma or semi;
-			;; indent this line  S-continued-statement-offset
-			;; more than previous.
+			;; indent this line  rb-continued-statement-offset
+			;; more than prbious.
 			(progn
-			  (S-backward-to-start-of-continued-exp (car contain-stack))
+			  (rb-backward-to-start-of-continued-exp (car contain-stack))
 			  (setq this-indent
-				(+ S-continued-statement-offset (current-column)
-				   (if at-brace S-continued-brace-offset 0))))
+				(+ rb-continued-statement-offset (current-column)
+				   (if at-brace rb-continued-brace-offset 0))))
 		      ;; Preceding line ended in comma or semi;
 		      ;; use the standard indent for this level.
 		      (if at-else
-			  (progn (S-backward-to-start-of-if opoint)
+			  (progn (rb-backward-to-start-of-if opoint)
 				 (setq this-indent (current-indentation)))
 			(setq this-indent (car indent-stack))))))
 	      ;; Just started a new nesting level.
 	      ;; Compute the standard indent for this level.
-	      (let ((val (S-calculate-indent
+	      (let ((val (rb-calculate-indent
 			   (if (car indent-stack)
 			       (- (car indent-stack))))))
 		(setcar indent-stack
 			(setq this-indent val))))
 	    ;; Adjust line indentation according to its contents
 	    (if (= (following-char) ?})
-		(setq this-indent (- this-indent S-indent-level)))
+		(setq this-indent (- this-indent rb-indent-level)))
 	    (if (= (following-char) ?{)
-		(setq this-indent (+ this-indent S-brace-offset)))
+		(setq this-indent (+ this-indent rb-brace-offset)))
 	    ;; Put chosen indentation into effect.
 	    (or (= (current-column) this-indent)
 		(= (following-char) ?\#)
@@ -2119,100 +2119,100 @@ Returns nil if line starts inside a string, t if in a comment."
   )
 
 ;; Predefined styles
-(defun S-set-style (&optional style)
-  "Set up the S-mode style variables from the S-style variable or if
+(defun rb-set-style (&optional style)
+  "Set up the rb-mode style variables from the rb-style variable or if
   STYLE argument is given, use that.  It makes the S indentation style 
   variables buffer local."
 
   (interactive)
 
-  (let ((S-styles (mapcar 'car S-style-alist)))
+  (let ((rb-styles (mapcar 'car rb-style-alist)))
 	
     (if (interactive-p)
 	(setq style
 	      (let ((style-string ; get style name with completion
 		     (completing-read
 		      (format "Set S mode indentation style to (default %s): "
-			      S-default-style)
-		      (vconcat S-styles)
-		      (function (lambda (arg) (memq arg S-styles)))
+			      rb-default-style)
+		      (vconcat rb-styles)
+		      (function (lambda (arg) (memq arg rb-styles)))
 		      )))
 		(if (string-equal "" style-string)
-		    S-default-style
+		    rb-default-style
 		  (intern style-string))
 		)))
     
-    (setq style (or style S-style)) ; use S-style if style is nil
+    (setq style (or style rb-style)) ; use rb-style if style is nil
     
-    (make-local-variable 'S-style)
-    (if (memq style S-styles)
-	(setq S-style style)
+    (make-local-variable 'rb-style)
+    (if (memq style rb-styles)
+	(setq rb-style style)
       (error (concat "Bad S style: " style))
       )
-    (message "S-style: %s" S-style)
+    (message "rb-style: %s" rb-style)
       
     ; finally, set the indentation style variables making each one local
-    (mapcar (function (lambda (S-style-pair)
-			(make-local-variable (car S-style-pair))
-			(set (car S-style-pair)
-			     (cdr S-style-pair))))
-	    (cdr (assq S-style S-style-alist)))
-    S-style))
+    (mapcar (function (lambda (rb-style-pair)
+			(make-local-variable (car rb-style-pair))
+			(set (car rb-style-pair)
+			     (cdr rb-style-pair))))
+	    (cdr (assq rb-style rb-style-alist)))
+    rb-style))
 
 
 
-;;; S-help-mode
+;;; rb-help-mode
 ;;;======================================================
 ;;;
 
-(defvar S-help-mode-map nil "Keymap for S help mode.")
-(defvar S-help-mode-hook nil "Functions to call when entering more mode. ")
+(defvar rb-help-mode-map nil "Keymap for S help mode.")
+(defvar rb-help-mode-hook nil "Functions to call when entering more mode. ")
 
-(defvar S-help-sec-map nil "Sub-keymap for S help mode.")
+(defvar rb-help-sec-map nil "Sub-keymap for S help mode.")
 
-(defun S-skip-to-help-section nil
+(defun rb-skip-to-help-section nil
   "Jump to a section heading of a help buffer. The section selected is
 determined by the command letter used to invoke the command, as indicated
-by S-help-sec-keys-alist. Use \\[S-describe-sec-map] to see which keystrokes
+by rb-help-sec-keys-alist. Use \\[rb-describe-sec-map] to see which keystrokes
 find which sections."
   (interactive)
   (let ((old-point (point)))
     (goto-char (point-min))
-    (let ((the-sec (cdr (assoc last-command-char S-help-sec-keys-alist))))
+    (let ((the-sec (cdr (assoc last-command-char rb-help-sec-keys-alist))))
       (if (not the-sec) (error "Invalid section key: %c" last-command-char)
 	(if (re-search-forward (concat "^" the-sec) nil t) nil
 	    (message "No %s section in this help. Sorry." the-sec)
 	    (goto-char old-point))))))
 
-(defun S-skip-to-next-section nil
+(defun rb-skip-to-next-section nil
   "Jump to next section in S help buffer."
   (interactive)
   (let ((case-fold-search nil))
     (if (re-search-forward "^[A-Z. ---]+:$" nil t) nil
       (message "No more sections."))))
 
-(defun S-skip-to-previous-section nil
-  "Jump to previous section in S help buffer."
+(defun rb-skip-to-prbious-section nil
+  "Jump to prbious section in S help buffer."
   (interactive)
   (let ((case-fold-search nil))
     (if (re-search-backward "^[A-Z. ---]+:$" nil t) nil
-      (message "No previous section."))))
+      (message "No prbious section."))))
 
-(defun S-describe-help-mode nil
-"Display help for S-mode"
+(defun rb-describe-help-mode nil
+"Display help for rb-mode"
  (interactive)
- (describe-function 'S-help-mode))
+ (describe-function 'rb-help-mode))
 
-(defun S-kill-buffer-and-go nil
+(defun rb-kill-buffer-and-go nil
   "Kill the current buffer and switch back to S"
   (interactive)
   (kill-buffer (current-buffer))
-  (S-switch-to-S nil))
+  (rb-switch-to-rb nil))
 
-(defun S-describe-sec-map nil
+(defun rb-describe-sec-map nil
   "Display help for the `s' key."
   (interactive)
-  (describe-function 'S-skip-to-help-section)
+  (describe-function 'rb-skip-to-help-section)
   (save-excursion
     (set-buffer "*Help*")
     (goto-char (point-max))
@@ -2220,46 +2220,46 @@ find which sections."
 
 Keystroke    Section
 ---------    -------\n")
-    (mapcar '(lambda (cs) (insert "    " (car cs) "        " (cdr cs) "\n")) S-help-sec-keys-alist)
-    (insert "\nFull list of key definitions:\n" (substitute-command-keys "\\{S-help-sec-map}"))))
+    (mapcar '(lambda (cs) (insert "    " (car cs) "        " (cdr cs) "\n")) rb-help-sec-keys-alist)
+    (insert "\nFull list of key definitions:\n" (substitute-command-keys "\\{rb-help-sec-map}"))))
 
-(defun S-find-help-file (p-string)
-  (let* ((default (S-read-object-name-default))
+(defun rb-find-help-file (p-string)
+  (let* ((default (rb-read-object-name-default))
          (prompt-string (if default
                             (format "%s(default %s) " p-string default)
                           p-string))
-	 (help-files-list (S-get-help-files-list))
+	 (help-files-list (rb-get-help-files-list))
          (spec (completing-read prompt-string help-files-list)))
     (list (cond
            ((string= spec "") default)
            (t spec)))))
 
-(defun S-get-help-files-list nil
+(defun rb-get-help-files-list nil
   (mapcar 'list
 	  (apply 'append
 		 (mapcar '(lambda (dirname)
 			    (if (file-directory-p dirname) 
 				(directory-files dirname)))
 			 (mapcar '(lambda (str) (concat str "/.Help"))
-				 S-search-list)))))
+				 rb-search-list)))))
 	  
-(if S-help-sec-map
+(if rb-help-sec-map
     nil
-  (setq S-help-sec-map (make-keymap))
+  (setq rb-help-sec-map (make-keymap))
   (mapcar '(lambda (key) 
-	    (define-key S-help-sec-map (char-to-string key) 
-	      'S-skip-to-help-section))
-	    (mapcar 'car S-help-sec-keys-alist))
-  (define-key S-help-sec-map "?" 'S-describe-sec-map)
-  (define-key S-help-sec-map ">" 'end-of-buffer)
-  (define-key S-help-sec-map "<" 'beginning-of-buffer)
+	    (define-key rb-help-sec-map (char-to-string key) 
+	      'rb-skip-to-help-section))
+	    (mapcar 'car rb-help-sec-keys-alist))
+  (define-key rb-help-sec-map "?" 'rb-describe-sec-map)
+  (define-key rb-help-sec-map ">" 'end-of-buffer)
+  (define-key rb-help-sec-map "<" 'beginning-of-buffer)
 )
 
-(defun S-display-help-on-object (object)
+(defun rb-display-help-on-object (object)
   "Display the help page for OBJECT in the *Help* buffer. 
 If prefix arg is given, forces a query of the S process for the help
 file.  Otherwise just pops to an existing buffer if it exists."
-  (interactive (S-find-help-file "Help on: "))
+  (interactive (rb-find-help-file "Help on: "))
   (let* ((hb-name (concat "*help(" object ")*"))
 	 (old-hb-p (get-buffer hb-name))
 	 (tbuffer (get-buffer-create hb-name)))
@@ -2267,11 +2267,11 @@ file.  Otherwise just pops to an existing buffer if it exists."
     (if (or (not old-hb-p) current-prefix-arg)
 	;; Ask S for the help file
 	(progn
-	  (setq S-temp-buffer-p t)		; Flag as a temp buffer
+	  (setq rb-temp-buffer-p t)		; Flag as a temp buffer
 	  (delete-region (point-min) (point-max))
-	  (S-help-mode)
-	  (S-command (format inferior-S-help-command object) tbuffer)
-	  (S-nuke-help-bs)
+	  (rb-help-mode)
+	  (rb-command (format inferior-rb-help-command object) tbuffer)
+	  (rb-nuke-help-bs)
 	  (goto-char (point-min))))
     (let (nodocs)
       (save-excursion
@@ -2284,12 +2284,12 @@ file.  Otherwise just pops to an existing buffer if it exists."
 	      ;; Avoid using 'message here -- may be %'s in string
 	      (ding)
 	      (kill-buffer tbuffer))
-	  (if (eq major-mode 'S-help-mode) (switch-to-buffer tbuffer)
+	  (if (eq major-mode 'rb-help-mode) (switch-to-buffer tbuffer)
 	    (pop-to-buffer tbuffer)))))))
 
 ;;; This function is a modification of nuke-nroff-bs in man.el from the
 ;;; standard emacs 18 lisp library.
-(defun S-nuke-help-bs ()
+(defun rb-nuke-help-bs ()
   (interactive "*")
   ;; Nuke underlining and overstriking (only by the same letter)
   (goto-char (point-min))
@@ -2314,91 +2314,91 @@ file.  Otherwise just pops to an existing buffer if it exists."
   (skip-chars-forward "\n")
   (delete-region (point-min) (point)))
 
-(if S-help-mode-map
+(if rb-help-mode-map
     nil
-  (setq S-help-mode-map (make-keymap))
-  (suppress-keymap S-help-mode-map)  
-  (define-key S-help-mode-map " " 'scroll-up)
-  (define-key S-help-mode-map "b" 'scroll-down)
-  (define-key S-help-mode-map "q" 'S-switch-to-end-of-S)
-  (define-key S-help-mode-map "\177" 'scroll-down) ; DEL
-  (define-key S-help-mode-map "s" S-help-sec-map)
-  (define-key S-help-mode-map "h" 'S-display-help-on-object)
-  (define-key S-help-mode-map "r" 'S-eval-region)
-  (define-key S-help-mode-map "n" 'S-skip-to-next-section)
-  (define-key S-help-mode-map "p" 'S-skip-to-previous-section)
-  (define-key S-help-mode-map "/" 'isearch-forward)
-  (define-key S-help-mode-map ">" 'end-of-buffer)
-  (define-key S-help-mode-map "<" 'beginning-of-buffer)
-  (define-key S-help-mode-map "x" 'S-kill-buffer-and-go)
-  (define-key S-help-mode-map "?" 'S-describe-help-mode)
-  (define-key S-help-mode-map "\C-c\C-r"    'S-eval-region)
-  (define-key S-help-mode-map "\C-c\M-r" 'S-eval-region-and-go)
-  (define-key S-help-mode-map "\C-c\C-f"    'S-eval-function)
-  (define-key S-help-mode-map "\M-\C-x"  'S-eval-function)
-  (define-key S-help-mode-map "\C-c\M-f" 'S-eval-function-and-go)
-  (define-key S-help-mode-map "\C-c\C-j"    'S-eval-line)
-  (define-key S-help-mode-map "\C-c\M-j" 'S-eval-line-and-go)
-  (define-key S-help-mode-map "\M-\C-a"  'S-beginning-of-function)
-  (define-key S-help-mode-map "\M-\C-e"  'S-end-of-function)
-  (define-key S-help-mode-map "\C-c\C-y"    'S-switch-to-S)
-  (define-key S-help-mode-map "\C-c\C-z" 'S-switch-to-end-of-S)
-  (define-key S-help-mode-map "\C-c\C-l"    'S-load-file)
-  (define-key S-help-mode-map "\C-c\C-h"    'S-display-help-on-object))
+  (setq rb-help-mode-map (make-keymap))
+  (suppress-keymap rb-help-mode-map)  
+  (define-key rb-help-mode-map " " 'scroll-up)
+  (define-key rb-help-mode-map "b" 'scroll-down)
+  (define-key rb-help-mode-map "q" 'rb-switch-to-end-of-rb)
+  (define-key rb-help-mode-map "\177" 'scroll-down) ; DEL
+  (define-key rb-help-mode-map "s" rb-help-sec-map)
+  (define-key rb-help-mode-map "h" 'rb-display-help-on-object)
+  (define-key rb-help-mode-map "r" 'rb-eval-region)
+  (define-key rb-help-mode-map "n" 'rb-skip-to-next-section)
+  (define-key rb-help-mode-map "p" 'rb-skip-to-prbious-section)
+  (define-key rb-help-mode-map "/" 'isearch-forward)
+  (define-key rb-help-mode-map ">" 'end-of-buffer)
+  (define-key rb-help-mode-map "<" 'beginning-of-buffer)
+  (define-key rb-help-mode-map "x" 'rb-kill-buffer-and-go)
+  (define-key rb-help-mode-map "?" 'rb-describe-help-mode)
+  (define-key rb-help-mode-map "\C-c\C-r"    'rb-eval-region)
+  (define-key rb-help-mode-map "\C-c\M-r" 'rb-eval-region-and-go)
+  (define-key rb-help-mode-map "\C-c\C-f"    'rb-eval-function)
+  (define-key rb-help-mode-map "\M-\C-x"  'rb-eval-function)
+  (define-key rb-help-mode-map "\C-c\M-f" 'rb-eval-function-and-go)
+  (define-key rb-help-mode-map "\C-c\C-j"    'rb-eval-line)
+  (define-key rb-help-mode-map "\C-c\M-j" 'rb-eval-line-and-go)
+  (define-key rb-help-mode-map "\M-\C-a"  'rb-beginning-of-function)
+  (define-key rb-help-mode-map "\M-\C-e"  'rb-end-of-function)
+  (define-key rb-help-mode-map "\C-c\C-y"    'rb-switch-to-rb)
+  (define-key rb-help-mode-map "\C-c\C-z" 'rb-switch-to-end-of-rb)
+  (define-key rb-help-mode-map "\C-c\C-l"    'rb-load-file)
+  (define-key rb-help-mode-map "\C-c\C-h"    'rb-display-help-on-object))
 
 ;;; Largely ripped from more-mode.el,
 ;;;  by Wolfgang Rupprecht wolfgang@mgm.mit.edu
 
-(defun S-help-mode ()
+(defun rb-help-mode ()
   "Mode for viewing S help files.
 Use SPC and DEL to page back and forth through the file.
 Use `s' to jump to a particular section; `s ?' for help.
 Use `q' to return to your S session; `x' to kill this buffer first.
 The usual commands for evaluating S source are available.
 Other keybindings are as follows:
-\\{S-help-mode-map}"
+\\{rb-help-mode-map}"
   (interactive)
-  (setq major-mode 'S-help-mode)
-  (setq mode-name "S Help")
-  (use-local-map S-help-mode-map)
-  (run-hooks S-help-mode-hook))
+  (setq major-mode 'rb-help-mode)
+  (setq mode-name "Rb Help")
+  (use-local-map rb-help-mode-map)
+  (run-hooks rb-help-mode-hook))
 
-(run-hooks 'S-mode-load-hook)
+(run-hooks 'rb-mode-load-hook)
 
 
-;;; Revision notes:
+;;; Rbision notes:
 ;;  Release 2.1 on October 14, 1991 to statlib@stat.cmu.edu, 
 ;;     and to the elisp archives at OSU (brennan@dg-rtp.dg.com (Dave Brennan))
 ;;  and announced on internet.s-news, netnews.gnu.emacs.sources, & 
 ;;    andrew.programs.S
 ;; -------------------------------------------------------
 ;;     Jul 26          1991  Frank Ritter
-;;   * added S-mode-load-hook & S-pre-run-hook
+;;   * added rb-mode-load-hook & rb-pre-run-hook
 ;;     and testing by neilc@research.att.com
 ;;     Jul 9           1991  Frank Ritter
-;;   * Changed S-command to use a register rather than 
+;;   * Changed rb-command to use a register rather than 
 ;;       the kill ring.
 ;;   * Better file header, comments now at 60 col so 
 ;;       mailers wont' eat them.
-;;   * Better S-extract-word-name.
-;;   * Added S-mode-version variable
+;;   * Better rb-extract-word-name.
+;;   * Added rb-mode-version variable
 ;;   * Changed syntax table to read |#; appropriately
 ;;
 ;; Wed Nov 28 11:03:50 1990  Ed Kademan  (kademan at hermes)
-;;   * Make the S-mode-syntax-table a slightly modified
+;;   * Make the rb-mode-syntax-table a slightly modified
 ;;       version of the c-mode-syntax-table instead of a
 ;;       version of the one for lisp.
 ;; 
 ;; Sat Nov 10 12:41:52 1990  Ed Kademan  (kademan at hermes)
-;;   * Made run-S and run-s commands synonymous with the
+;;   * Made run-rb and run-s commands synonymous with the
 ;;       function S.
 ;; 
 ;; Fri Oct 19 12:41:52 1990  Ed Kademan  (kademan at hermes)
-;;   * Made S-directory a user modifiable variable.  S will
+;;   * Made rb-directory a user modifiable variable.  S will
 ;;       run from that directory.
 ;; 
 ;; Thu Oct 18 12:41:52 1990  Ed Kademan  (kademan at hermes)
-;;   * Added function S-nuke-help-bs to clean up nroff
+;;   * Added function rb-nuke-help-bs to clean up nroff
 ;;       style text in the S help buffer.  This function is
 ;;       a modification of nuke-nroff-bs from man.el.
 ;; -------------------------------------------------------
@@ -2407,44 +2407,44 @@ Other keybindings are as follows:
 ;; Fri Jan 17 1992 Dave Smith (dsmith@stats.adelaide.edu.au)
 ;;   * Help mode for reading files. When asking for an object to
 ;;     run help on, completion is over those help files that exist.
-;;   * Added object name completion, and made S-get-object-list
+;;   * Added object name completion, and made rb-get-object-list
 ;;     efficient enough to make it worthwile.
 ;;   * Error parsing for loaded files
 ;;   * Better customization of file-names, with sensible defaults
 ;;   * Sensible buffer names for object buffers
 ;;   * Corrected definition for `.' in syntax table
-;;   * Improved (and simplified) S-read-object-name-default
+;;   * Improved (and simplified) rb-read-object-name-default
 ;;   * Included pager='cat' to default help-command specification
-;;   * Added a call to run-hook for S-pre-run-hook
+;;   * Added a call to run-hook for rb-pre-run-hook
 ;;   * Changed keymaps to conform with GNU guidelines
 ;;     (i.e. no \C-letter bindings)
-;;   * S-command has a new third argument, visible
+;;   * rb-command has a new third argument, visible
 ;;
 ;; Tue May 27 1992 Dave Smith (dsmith@stats.adelaide.edu.au)
 ;;   * now copes with dynamically changing prompts (reported by Doug Bates)
 ;;
 ;; Thu May 29 1992 Dave Smith (dsmith@stats.adelaide.edu.au)
-;;   * Added S-execute, modified S-execute-* to use it.
+;;   * Added rb-execute, modified rb-execute-* to use it.
 ;;
 ;; Mon Jun 22 1992 dsmith
-;;   * Added S-mode editing commands written by Ken'ichi Shibayama
+;;   * Added rb-mode editing commands written by Ken'ichi Shibayama
 ;;     (shiba@isac.co.jp). A big win. 
-;;   * Removed the redundant argument to S-switch-to-end-of-S
-;;   * S-function-pattern improved
-;;   * added S-eval-visibly, S-eval-visibly-p and modified S-eval-*
+;;   * Removed the redundant argument to rb-switch-to-end-of-rb
+;;   * rb-function-pattern improved
+;;   * added rb-eval-visibly, rb-eval-visibly-p and modified rb-eval-*
 ;;     to use them
-;;   * added S-eval-line-and-next-line
+;;   * added rb-eval-line-and-next-line
 ;;   * eval commands can now echo in the process buffer
-;;   * added S-kill-output and S-view-at-bottom
+;;   * added rb-kill-output and rb-view-at-bottom
 ;;   * added a binding for comint-isearch and autoloaded it
-;;   * added S-execute-in-tb. S-parse-errors now takes prefix arg.
+;;   * added rb-execute-in-tb. rb-parse-errors now takes prefix arg.
 ;;
 ;; Thu Jun 25 1992 dsmith
 ;;   * Moved some doctrings to comments (Frank Ritter)
 ;;   * The Tek stuff now lives in a separate file (Frank Ritter)
 ;;   * Fiddly C-c ESC M-. bindings in S mode and Help mode moved
 ;;       to C-c M-. bindings (Martin Maechler)
-;;   * S-execute-objects now uses variable inferior-S-objects-command
+;;   * rb-execute-objects now uses variable inferior-rb-objects-command
 ;;       whose value depends on S version. (Ken'ichi Shibayama)
-;;   * Symbols given uniform prefixes: S- or inferior-S- (Frank Ritter)
+;;   * Symbols given uniform prefixes: rb- or inferior-rb (Frank Ritter)
 
