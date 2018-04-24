@@ -29,8 +29,11 @@
 ;;;; So we have an unnecessary shell that causes no harm and a
 ;;;; major mode that does not launch the right process when called by
 ;;;; a file with proper extension. Still buggy but just works.
+
+;;; testing rb-mode
 ;(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
-;(require 'rev-mode)
+;(require 'rev-mode)                                                    ;;
+;;(autoload 'rev-mode "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode/rev-mode" "" t)
 ;(defun rev-mode-sh-hook ()                                             ;;
 ;  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
 ;  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
@@ -41,6 +44,10 @@
 ;(add-hook 'sh-mode-hook 'rev-mode-sh-hook)
 ;;; setup files ending in “.rev” to open in rev-mode
 ;(add-to-list 'auto-mode-alist '("\\.rev\\'" . rev-mode))
+;;(setq load-path (cons (expand-file-name "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode/s-mode/") load-path))
+;;(autoload 'rev "rev" "" t)
+;;(setq inferior-S-program "rb")
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -55,7 +62,7 @@
 ;; Code for `inferior-rev-mode'
 (require 'comint)
 
-(defcustom rev-program "rev"
+(defcustom rev-program "rb"
   "Path to the program used by `inferior-rev'."
   :type 'string
   :group 'rev)
@@ -97,7 +104,7 @@
   nil "rev"
   (setq comint-prompt-regexp rev-prompt-regexp)
   (setq comint-prompt-read-only t)
-  (set (make-local-variable 'font-lock-defaults) '(rev-font-lock-keywords t))
+  ;(set (make-local-variable 'font-lock-defaults) '(rev-font-lock-keywords t))
   (set (make-local-variable 'paragraph-start) rev-prompt-regexp)
   (set (make-local-variable 'indent-line-function) 'rev-indent-line))
 
