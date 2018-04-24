@@ -102,11 +102,10 @@
 (defalias 'run-rb #'inferior-rb
   "Run an inferior instance of `rb' inside Emacs.")
 
-;(provide 'rb-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;;;;;;;;;;;;;;;;code from essh.el
+;;;;;;;;;;;;;;;;;code modified from essh.el, it turns out to contain code that the developer of essh borrowed from sh-mode.el
 ;; function taken from ess package
 (defun rb-next-code-line (&optional arg)
   "Move ARG lines of code forward (backward if ARG is negative).
