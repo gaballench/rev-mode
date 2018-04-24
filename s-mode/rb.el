@@ -555,7 +555,7 @@ This is a buffer-local variable.")
 ;;;=====================================================
 ;;;
 
-(defvar inferior-rb-mode-map nil)
+(defvar inferior-rb-mode-map t)
 (if inferior-rb-mode-map
     nil
   (setq inferior-rb-mode-map (full-copy-sparse-keymap comint-mode-map))
@@ -583,7 +583,7 @@ This is a buffer-local variable.")
 (defvar rb-mode-syntax-table nil "Syntax table for rb-mode.")
 (if rb-mode-syntax-table
     nil
-  (setq rb-mode-syntax-table (make-syntax-table c-mode-syntax-table))
+  (setq rb-mode-syntax-table (make-syntax-table rb-mode-syntax-table))
   (modify-syntax-entry ?# "<" rb-mode-syntax-table)  ; now an open comment
   (modify-syntax-entry ?\n ">" rb-mode-syntax-table) ; close comment
   (modify-syntax-entry ?_ "." rb-mode-syntax-table)  
