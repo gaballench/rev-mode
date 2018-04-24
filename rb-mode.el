@@ -22,7 +22,7 @@
 
 ;;;;;;;;;;;;;; in .emacs:
 ;;;; rb-mode will only run with these in the .emacs file
-;;;; and also runninng the following run-rb; opening the file, then sh-mode
+;;;; and also runninng the following: opening the file, then run-rb
 ;;;; this way, it "just works"
 ;(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
 ;(require 'rb-mode)
@@ -34,7 +34,16 @@
 ;  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rb))      ;;
 ;;  (define-key sh-mode-map "\C-c\C-d" 'rb-cd-current-directory)) ;;
 ;(add-hook 'sh-mode-hook 'rb-mode-sh-hook)
+;;; setup files ending in “.rev” to open in rb-mode
+;(add-to-list 'auto-mode-alist '("\\.rev\\'" . rb-mode))
 ;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;; define autoload as an instance of sh-mode as suggested here http://ergoemacs.org/emacs/elisp_syntax_coloring.html
+;;;###autoload
+(define-derived-mode rb-mode sh-mode "rb mode"
+  "Major mode for editing and evaluating Rev")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; run-rb modified from run-julia in julia-mode. working properly
