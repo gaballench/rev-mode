@@ -24,16 +24,16 @@
 ;;;; rb-mode will only run with these in the .emacs file
 ;;;; and also runninng the following run-rb; opening the file, then sh-mode
 ;;;; this way, it "just works"
-(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
-(require 'rb-mode)
-(defun rb-mode-sh-hook ()                                             ;;
-  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rb)        ;;
-  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rb)        ;;
-  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rb)          ;;
-  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rb-and-step) ;;
-  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rb))      ;;
-;  (define-key sh-mode-map "\C-c\C-d" 'rb-cd-current-directory)) ;;
-(add-hook 'sh-mode-hook 'rb-mode-sh-hook)
+;(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
+;(require 'rb-mode)
+;(defun rb-mode-sh-hook ()                                             ;;
+;  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rb)        ;;
+;  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rb)        ;;
+;  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rb)          ;;
+;  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rb-and-step) ;;
+;  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rb))      ;;
+;;  (define-key sh-mode-map "\C-c\C-d" 'rb-cd-current-directory)) ;;
+;(add-hook 'sh-mode-hook 'rb-mode-sh-hook)
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
