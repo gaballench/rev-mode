@@ -6,7 +6,7 @@ This mode aims at interpreting `rev` code for use in `revbayes` under Emacs. It 
 At this moment it just runs, provided taht you include the following in your `.emacs` file or wherever appropriate:
 
 ```lisp
-(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
+(add-to-list 'load-path "/path/to/rev-mode")
 (require 'rev-mode)                                                    ;;
 (defun rev-mode-sh-hook ()                                             ;;
   (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
