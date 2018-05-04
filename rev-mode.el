@@ -197,6 +197,8 @@ outpr)
 (defun pipe-line-to-rev (&optional step)
   "Evaluates the current line to the rev interpreter."
   (interactive ())
+  (if (process-rev) nil
+		  (run-rev))
   (setq com (buffer-substring (point-at-bol) (point-at-eol)))
   (if (> (length com) 0)
       (progn
@@ -208,11 +210,15 @@ outpr)
 (defun pipe-line-to-rev-and-step ()
   "Evaluates the current line to the rev interpreter and goes to next line."
   (interactive)
+  (if (process-rev) nil
+		  (run-rev))  
   (pipe-line-to-rev t))
 
 (defun pipe-region-to-rev (start end)
   "Sends a region to the rev interpreter."
   (interactive "r")
+  (if (process-rev) nil
+		  (run-rev))
   (setq com (buffer-substring start end))	       ;reads command
   (setq lcom (length com))		       ;count chars
   (setq lastchar (substring com (1- lcom) lcom)) ;get last char
@@ -232,11 +238,15 @@ outpr)
 (defun pipe-buffer-to-rev ()
   "Evaluate whole buffer to the rev interpreter."
   (interactive)
+  (if (process-rev) nil
+		  (run-rev))
   (pipe-region-to-rev (point-min) (point-max)))
 
 (defun pipe-function-to-rev ()
 "Evaluate function to the rev interpreter."
 (interactive)
+  (if (process-rev) nil
+		  (run-rev))
 (setq beg-end (essh-beg-end-of-function))
 (if beg-end
     (save-excursion
