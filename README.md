@@ -21,4 +21,4 @@ At this moment it just runs, provided taht you include the following in your `.e
 
 ## How to use
 
-At present it does not run automatically so first you will need to open a `.rev` file (it will be recognized as `rev-mode`); this unfortunately opens a terminal buffer that is unnecessary but also harmless as all the code redirection goes directly to the `rb` process. you will need to open a RevBayes process with `run-rev`; this will open a command line interpreter of the `rb` program. Afterwards just use the keystroke combinations described above.
+An earlier version required the user to open explicitly `run-rev` in order to redirect code to the console, but this is no longer necessary; it is automatically tested during code redirection whether there is an `rb` process active, it not, it opens a new process. The only thing the user needs to do is to open a file and use any of the key combinations for code redirection.
