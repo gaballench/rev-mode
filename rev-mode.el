@@ -6,6 +6,7 @@
 ;; Keywords: lisp, languages, files
 ;; Created: 4 May 2018
 ;; Version: 0.0.1
+;; Package-Requires: ((graphviz-dot-mode "0.4"))
 ;; URL: https://github.com/gaballench/rev-mode
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -23,7 +24,7 @@
 
 ;;; Commentary:
 
-;; The package rev-mode provides a platform for interactive work with the Rev language of RevBayes, a program for bayesian evolutionary analyses.  It provides the usual advantages of a major mode, such as syntax highlight and text redirection to RevBayes processes.  This project itself was heavily based on `essh' and `julia-mode' although it is becoming less similar to these with time.
+;; The package rev-mode provides a platform for interactive work with the Rev language of RevBayes, a program for bayesian evolutionary analyses.  It provides the usual advantages of a major mode, such as syntax highlight and text redirection to RevBayes processes.  This project itself was heavily based on `essh' and `julia-mode' although it is becoming less similar to these with time. Some functionality depends on `graphviz' so you should install it for the appropriate operative system.
 
 ;; Installation is a simple process.  Just clone the github repository and add the following to your .emacs file:
 ;(add-to-list 'load-path "/path/to/rev-mode")
@@ -272,6 +273,11 @@ Argument END ."
       (list beg end)
     nil))
 ;;;;;;;;;;;;;;
+
+;;;; In development
+;; code for autodetecting dot files and compiling with graphviz
+;; still something missing as it is detecting temp files (#)
+;(first-error (lgrep "digraph" "-r --exclude=\\# --exclude=\\*.Rev" (file-name-directory buffer-file-name)))
 
 ;; Keybindings
 (defun rev-mode-sh-hook ()                                             "."
