@@ -7,14 +7,7 @@ At this moment it just runs, provided taht you include the following in your `.e
 
 ```lisp
 (add-to-list 'load-path "/path/to/rev-mode")
-(require 'rev-mode)                                                    ;;
-(defun rev-mode-sh-hook ()                                             ;;
-  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
-  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
-  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
-  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rev-and-step) ;;
-  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rev))      ;;
-(add-hook 'sh-mode-hook 'rev-mode-sh-hook)
+(require 'rev-mode)
 ;; setup files ending in “.rev” to open in rev-mode
 (add-to-list 'auto-mode-alist '("\\.rev\\'" . rev-mode))
 ```
