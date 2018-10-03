@@ -1,57 +1,40 @@
-;;; essh.el --- a set of commands that emulate for bash what ESS is to R.
+;;; rev-mode.el --- An Emacs Engine for RevBayes -*- lexical-binding: t; -*-
 
-;; Filename: rev-mode.el
+;; Copyright (C) 2018  Gustavo  A. Ballen
 
+;; Author: Gustavo A. Ballen <gaballench@gmail.com>
+;; Keywords: lisp, languages, files
+;; Created: 4 May 2018
+;; Version: 0.0.1
+;; URL: https://github.com/gaballench/rev-mode
 
-;; ------------------------------------------------------------------ ;;
-;; TO INSTALL:                                                        ;;
-;; 1. add rev-mode.el in your load-path.                                  ;;
-;;                                                                    ;;
-;; 2. add to your .emacs file:                                        ;;
-;;                                                                    ;;
-;; (require 'rev-mode)                                                    ;;
-;; (defun essh-sh-hook ()                                             ;;
-;;   (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
-;;   (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
-;;   (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
-;;   (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rev-and-step) ;;
-;;   (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rev)      ;;
-;;   (define-key sh-mode-map "\C-c\C-d" 'rev-cd-current-directory)) ;;
-;; (add-hook 'sh-mode-hook 'rev-sh-hook)                             ;;
-;; ------------------------------------------------------------------ ;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-;;;;;;;;;;;;;; in .emacs:
-;;;; rev-mode will only run with these in the .emacs file
-;;;; and also runninng the following: opening the file, then run-rev
-;;;; this way, it "just works"
-;;;; If there is no rev process the first thing that happens is sh-mode opening a shell instance that fails to receive code from the keybindings
-;;;; However, if we open a run-rev process, code gets redirected properly
-;;;; So we have an unnecessary shell that causes no harm and a
-;;;; major mode that does not launch the right process when called by
-;;;; a file with proper extension. Still buggy but just works.
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
 
-;;; testing rb-mode
-;(add-to-list 'load-path "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode")
-;(require 'rev-mode)                                                    ;;
-;;(autoload 'rev-mode "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode/rev-mode" "" t)
-;(defun rev-mode-sh-hook ()                                             ;;
-;  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
-;  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
-;  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
-;  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rev-and-step) ;;
-;  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rev))      ;;
-;;  (define-key sh-mode-map "\C-c\C-d" 'rev-cd-current-directory)) ;;
-;(add-hook 'sh-mode-hook 'rev-mode-sh-hook)
-;;; setup files ending in “.rev” to open in rev-mode
-;(add-to-list 'auto-mode-alist '("\\.rev\\'" . rev-mode))
-;;(setq load-path (cons (expand-file-name "/home/balleng/Dropbox/Gustavo/softwareDevel/rev-mode/s-mode/") load-path))
-;;(autoload 'rev "rev" "" t)
-;;(setq inferior-S-program "rb")
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;;;;;;;;;;;;;;;;;;;;;;;
+;;; Commentary:
 
+;; The package rev-mode provides a platform for interactive work with the Rev language of RevBayes, a program for bayesian evolutionary analyses. It provides the usual advantages of a major mode, such as syntax highlight and text redirection to RevBayes processes. This project itself was heavily based on `essh' and `julia-mode' although it is becoming less similar to these with time.
 
-;;;; define autoload as an instance of sh-mode as suggested here http://ergoemacs.org/emacs/elisp_syntax_coloring.html
+;; Installation is a simple process. Just clone the github repository and add the following to your .emacs file:
+;(add-to-list 'load-path "/path/to/rev-mode")
+;(require 'rev-mode)
+;;; associate the .Rev extension to rev-mode
+;(setq auto-mode-alist
+;        (cons '("\\.Rev" . rev-mode) auto-mode-alist))
+
+;;; Code:
+
+;;;; define autoload as an instance of sh-mode as suggested here https://www.gnu.org/software/emacs/manual/html_node/elisp/Derived-Modes.html
 ;;;###autoload
 (define-derived-mode rev-mode sh-mode "rev mode"
   "Major mode for editing and evaluating Rev")
@@ -285,5 +268,17 @@ outpr)
     nil))
 ;;;;;;;;;;;;;;
 
+;; Keybindings
+(defun rev-mode-sh-hook ()                                             ;;
+  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
+  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
+  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
+  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rev-and-step) ;;
+  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rev))      ;;
+;  (define-key sh-mode-map "\C-c\C-d" 'rev-cd-current-directory)) ;;
+(add-hook 'sh-mode-hook 'rev-mode-sh-hook)
+;; setup files ending in “.rev” to open in rev-mode
+(add-to-list 'auto-mode-alist '("\\.rev\\'" . rev-mode))
 
 (provide 'rev-mode)
+;;; rev-mode.el ends here
