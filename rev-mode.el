@@ -279,6 +279,7 @@ Argument END ."
 ;; still something missing as it is detecting temp files (#)
 ;(first-error (lgrep "digraph" "-r --exclude=\\# --exclude=\\*.Rev" (file-name-directory buffer-file-name)))
 
+
 ;; Keybindings
 (defun rev-mode-sh-hook ()                                             "."
   (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
