@@ -23,9 +23,9 @@
 
 ;;; Commentary:
 
-;; The package rev-mode provides a platform for interactive work with the Rev language of RevBayes, a program for bayesian evolutionary analyses. It provides the usual advantages of a major mode, such as syntax highlight and text redirection to RevBayes processes. This project itself was heavily based on `essh' and `julia-mode' although it is becoming less similar to these with time.
+;; The package rev-mode provides a platform for interactive work with the Rev language of RevBayes, a program for bayesian evolutionary analyses.  It provides the usual advantages of a major mode, such as syntax highlight and text redirection to RevBayes processes.  This project itself was heavily based on `essh' and `julia-mode' although it is becoming less similar to these with time.
 
-;; Installation is a simple process. Just clone the github repository and add the following to your .emacs file:
+;; Installation is a simple process.  Just clone the github repository and add the following to your .emacs file:
 ;(add-to-list 'load-path "/path/to/rev-mode")
 ;(require 'rev-mode)
 ;;; associate the .Rev extension to rev-mode
@@ -121,7 +121,7 @@ On success, return 0.  Otherwise, go as far as possible and return -1."
     n))
 
 (defun process-rev ()
-  "returns a list with existing shell process."
+  "Return a list with existing shell process."
   (interactive)
   (setq listpr (process-list))
   (setq lengthpr (length listpr))
@@ -135,7 +135,7 @@ On success, return 0.  Otherwise, go as far as possible and return -1."
 
 
 (defun process-rev-choose ()
-  "returns which process to use."
+  "Return which process to use."
 (interactive)
 (setq outpr 0)
 (setq cbuf (current-buffer))
@@ -156,11 +156,13 @@ outpr)
 
 
 (defun rev-eval-line (sprocess command)
-  "Evaluates a single command into the shell process."
+  "Evaluate SPROCESS with a redirected COMMAND.
+Argument SPROCESS evaluates a single command.
+Argument COMMAND is a string to be redirected."
   (setq sbuffer (process-buffer sprocess))
   (setq command (concat command "\n"))
   (accept-process-output sprocess 0 10)
-  (with-current-buffer sbuffer 
+  (with-current-buffer sbuffer
     (end-of-buffer) ;point is not seen being moved (unless sbuffer is focused)
     (insert command)			;pastes the command to shell
     (set-marker (process-mark sprocess) (point-max))
@@ -178,7 +180,8 @@ outpr)
 
 
 (defun pipe-line-to-rev (&optional step)
-  "Evaluates the current line to the rev interpreter."
+  "Evaluate the current line to the rev interpreter.
+Optional argument STEP ."
   (interactive ())
   (if (process-rev) nil
 		  (run-rev))
@@ -191,14 +194,16 @@ outpr)
     (message "No command in this line")))
 
 (defun pipe-line-to-rev-and-step ()
-  "Evaluates the current line to the rev interpreter and goes to next line."
+  "Evaluate the current line to the rev interpreter and go to next line."
   (interactive)
   (if (process-rev) nil
-		  (run-rev))  
+		  (run-rev))
   (pipe-line-to-rev t))
 
 (defun pipe-region-to-rev (start end)
-  "Sends a region to the rev interpreter."
+  "Sends a region to the rev interpreter.
+Argument START .
+Argument END ."
   (interactive "r")
   (if (process-rev) nil
 		  (run-rev))
@@ -209,13 +214,13 @@ outpr)
     (setq com (concat com "\n")))	     ;...add it!
   (setq sprocess (process-rev-choose))
   (setq sbuffer (process-buffer sprocess))
-  (while (> (length com) 0) 
-    (setq pos (string-match "\n" com)) 
+  (while (> (length com) 0)
+    (setq pos (string-match "\n" com))
     (setq scom (substring com 0 pos))
     (setq com (substring com (min (length com) (1+ pos))))
     (rev-eval-line sprocess scom)
     (accept-process-output sprocess 0 10)
-    )) 
+    ))
 
 
 (defun pipe-buffer-to-rev ()
@@ -243,13 +248,13 @@ outpr)
   (message "No function at current point.")))
 
 (defun rev-beg-end-of-function ()
-  "Returns the lines where the function starts and ends. If there is no function at current line, it returns nil."
+  "Return the lines where the function start and ends.  If there is no function at current line, it return nil."
   (interactive)
   (setq curline (line-number-at-pos))	;current line
   (setq curcom (buffer-substring (point-at-bol) (point-at-eol)))
   (setq pos (string-match "function" curcom))
-  (save-excursion 
-    (if pos 
+  (save-excursion
+    (if pos
 	(progn
 	  (setq beg curline))
       (progn
@@ -269,7 +274,7 @@ outpr)
 ;;;;;;;;;;;;;;
 
 ;; Keybindings
-(defun rev-mode-sh-hook ()                                             ;;
+(defun rev-mode-sh-hook ()                                             "."
   (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
   (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
   (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
