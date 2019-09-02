@@ -274,7 +274,7 @@ Argument END ."
 ;;;;;;;;;;;;;;
 
 ;; Keybindings
-(defun rev-mode-sh-hook ()                                             "."
+(defun rev-mode-sh-hook ()
   (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
   (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
   (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
