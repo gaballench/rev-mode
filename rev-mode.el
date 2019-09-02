@@ -42,11 +42,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; run-rev modified from run-julia in julia-mode. working properly
-;; Code for `inferior-rev-mode'
+;; Code for `rev-inferior-rev-mode'
 (require 'comint)
 
 (defcustom rev-program "rb"
-  "Path to the program used by `inferior-rev'."
+  "Path to the program used by `rev-inferior-rev'."
   :type 'string
   :group 'rev)
 
@@ -56,17 +56,17 @@
   :group 'rev)
 
 (defvar rev-prompt-regexp "^\\w*> "
-  "Regexp for matching `inferior-rev' prompt.")
+  "Regexp for matching `rev-inferior-rev' prompt.")
 
-(defvar inferior-rev-mode-map
+(defvar rev-inferior-rev-mode-map
   (let ((map (nconc (make-sparse-keymap) comint-mode-map)))
     ;; example definition
     (define-key map (kbd "TAB") 'rev-latexsub-or-indent)
     map)
-  "Basic mode map for `inferior-rev-mode'.")
+  "Basic mode map for `rev-inferior-rev-mode'.")
 
 ;;;###autoload
-(defun inferior-rev ()
+(defun rev-inferior-rev ()
     "Run an inferior instance of `rev' inside Emacs."
     (interactive)
     (let ((rev-program rev-program)
@@ -74,16 +74,16 @@
       (when (not (comint-check-proc "*rev*"))
             (apply #'make-comint-in-buffer "rev" "*rev*" rev-program rev-arguments))
       (pop-to-buffer-same-window "*rev*")
-      (inferior-rev-mode)))
+      (rev-inferior-rev-mode)))
 
-(defun inferior-rev--initialize ()
-    "Helper function to initialize `inferior-rev'."
+(defun rev-inferior-rev--initialize ()
+    "Helper function to initialize `rev-inferior-rev'."
     (setq comint-use-prompt-regexp t))
 
-(define-derived-mode inferior-rev-mode comint-mode "rev"
-  "Major mode for `inferior-rev'.
+(define-derived-mode rev-inferior-rev-mode comint-mode "rev"
+  "Major mode for `rev-inferior-rev'.
 
-\\<inferior-rev-mode-map>"
+\\<rev-inferior-rev-mode-map>"
   nil "rev"
   (setq comint-prompt-regexp rev-prompt-regexp)
   (setq comint-prompt-read-only t)
@@ -91,10 +91,10 @@
   (set (make-local-variable 'paragraph-start) rev-prompt-regexp)
   (set (make-local-variable 'indent-line-function) 'rev-indent-line))
 
-(add-hook 'inferior-rev-mode-hook 'inferior-rev--initialize)
+(add-hook 'rev-inferior-rev-mode-hook 'rev-inferior-rev--initialize)
 
 ;;;###autoload
-(defalias 'run-rev #'inferior-rev
+(defalias 'run-rev #'rev-inferior-rev
   "Run an inferior instance of `rev' inside Emacs.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
