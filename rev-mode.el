@@ -1,4 +1,4 @@
-;;; rev-mode.el --- An Emacs Engine for RevBayes -*- lexical-binding: t; -*-
+;;; rev-mode.el --- An Interactive IDE Engine for RevBayes -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018  Gustavo  A. Ballen
 
@@ -6,6 +6,7 @@
 ;; Keywords: lisp, languages, files
 ;; Created: 4 May 2018
 ;; Version: 0.0.1
+;; Package-Requires: ((emacs "24"))
 ;; URL: https://github.com/gaballench/rev-mode
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -41,7 +42,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
-; run-rev modified from run-julia in julia-mode. working properly
+; rev-run-rev modified from run-julia in julia-mode. working properly
 ;; Code for `rev-inferior-rev-mode'
 (require 'comint)
 
@@ -94,7 +95,7 @@
 (add-hook 'rev-inferior-rev-mode-hook 'rev-inferior-rev--initialize)
 
 ;;;###autoload
-(defalias 'run-rev #'rev-inferior-rev
+(defalias 'rev-run-rev #'rev-inferior-rev
   "Run an inferior instance of `rev' inside Emacs.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,12 +180,12 @@ Argument COMMAND is a string to be redirected."
 ;  (shell-eval-line sprocess com))
 
 
-(defun pipe-line-to-rev (&optional step)
+(defun rev-pipe-line-to-rev (&optional step)
   "Evaluate the current line to the rev interpreter.
 Optional argument STEP ."
   (interactive ())
   (if (rev-process-rev) nil
-		  (run-rev))
+		  (rev-run-rev))
   (setq com (buffer-substring (point-at-bol) (point-at-eol)))
   (if (> (length com) 0)
       (progn
@@ -193,20 +194,20 @@ Optional argument STEP ."
 	(when step (rev-next-code-line)))
     (message "No command in this line")))
 
-(defun pipe-line-to-rev-and-step ()
+(defun rev-pipe-line-to-rev-and-step ()
   "Evaluate the current line to the rev interpreter and go to next line."
   (interactive)
   (if (rev-process-rev) nil
-		  (run-rev))
-  (pipe-line-to-rev t))
+		  (rev-run-rev))
+  (rev-pipe-line-to-rev t))
 
-(defun pipe-region-to-rev (start end)
+(defun rev-pipe-region-to-rev (start end)
   "Sends a region to the rev interpreter.
 Argument START .
 Argument END ."
   (interactive "r")
   (if (rev-process-rev) nil
-		  (run-rev))
+		  (rev-run-rev))
   (setq com (buffer-substring start end))	       ;reads command
   (setq lcom (length com))		       ;count chars
   (setq lastchar (substring com (1- lcom) lcom)) ;get last char
@@ -223,18 +224,18 @@ Argument END ."
     ))
 
 
-(defun pipe-buffer-to-rev ()
+(defun rev-pipe-buffer-to-rev ()
   "Evaluate whole buffer to the rev interpreter."
   (interactive)
   (if (rev-process-rev) nil
-		  (run-rev))
-  (pipe-region-to-rev (point-min) (point-max)))
+		  (rev-run-rev))
+  (rev-pipe-region-to-rev (point-min) (point-max)))
 
-(defun pipe-function-to-rev ()
+(defun rev-pipe-function-to-rev ()
 "Evaluate function to the rev interpreter."
 (interactive)
   (if (rev-process-rev) nil
-		  (run-rev))
+		  (rev-run-rev))
 (setq beg-end (rev-beg-end-of-function))
 (if beg-end
     (save-excursion
@@ -244,7 +245,7 @@ Argument END ."
       (setq origin (point-at-bol))
       (forward-line end)
       (setq terminal (point-at-eol))
-      (pipe-region-to-rev origin terminal))
+      (rev-pipe-region-to-rev origin terminal))
   (message "No function at current point.")))
 
 (defun rev-beg-end-of-function ()
@@ -275,11 +276,11 @@ Argument END ."
 
 ;; Keybindings
 (defun rev-mode-sh-hook ()
-  (define-key sh-mode-map "\C-c\C-r" 'pipe-region-to-rev)        ;;
-  (define-key sh-mode-map "\C-c\C-b" 'pipe-buffer-to-rev)        ;;
-  (define-key sh-mode-map "\C-c\C-j" 'pipe-line-to-rev)          ;;
-  (define-key sh-mode-map "\C-c\C-n" 'pipe-line-to-rev-and-step) ;;
-  (define-key sh-mode-map "\C-c\C-f" 'pipe-function-to-rev))      ;;
+  (define-key sh-mode-map "\C-c\C-r" 'rev-pipe-region-to-rev)        ;;
+  (define-key sh-mode-map "\C-c\C-b" 'rev-pipe-buffer-to-rev)        ;;
+  (define-key sh-mode-map "\C-c\C-j" 'rev-pipe-line-to-rev)          ;;
+  (define-key sh-mode-map "\C-c\C-n" 'rev-pipe-line-to-rev-and-step) ;;
+  (define-key sh-mode-map "\C-c\C-f" 'rev-pipe-function-to-rev))      ;;
 ;  (define-key sh-mode-map "\C-c\C-d" 'rev-cd-current-directory)) ;;
 (add-hook 'sh-mode-hook 'rev-mode-sh-hook)
 ;; setup files ending in “.rev” to open in rev-mode
