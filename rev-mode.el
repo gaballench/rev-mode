@@ -235,7 +235,7 @@ Argument END ."
 (interactive)
   (if (process-rev) nil
 		  (run-rev))
-(setq beg-end (essh-beg-end-of-function))
+(setq beg-end (rev-beg-end-of-function))
 (if beg-end
     (save-excursion
       (setq beg (nth 0 beg-end))
