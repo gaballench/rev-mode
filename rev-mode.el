@@ -120,7 +120,7 @@ On success, return 0.  Otherwise, go as far as possible and return -1."
       (setq arg (- arg inc)))
     n))
 
-(defun process-rev ()
+(defun rev-process-rev ()
   "Return a list with existing shell process."
   (interactive)
   (setq listpr (process-list))
@@ -134,12 +134,12 @@ On success, return 0.  Otherwise, go as far as possible and return -1."
   listshellp)
 
 
-(defun process-rev-choose ()
+(defun rev-process-rev-choose ()
   "Return which process to use."
 (interactive)
 (setq outpr 0)
 (setq cbuf (current-buffer))
-(setq shelllist (process-rev))
+(setq shelllist (rev-process-rev))
 (setq shelln (length shelllist))
 (if (eq shelln 0)
     (progn (shell)
@@ -183,12 +183,12 @@ Argument COMMAND is a string to be redirected."
   "Evaluate the current line to the rev interpreter.
 Optional argument STEP ."
   (interactive ())
-  (if (process-rev) nil
+  (if (rev-process-rev) nil
 		  (run-rev))
   (setq com (buffer-substring (point-at-bol) (point-at-eol)))
   (if (> (length com) 0)
       (progn
-	(setq sprocess (process-rev-choose))
+	(setq sprocess (rev-process-rev-choose))
 	(rev-eval-line sprocess com)
 	(when step (rev-next-code-line)))
     (message "No command in this line")))
@@ -196,7 +196,7 @@ Optional argument STEP ."
 (defun pipe-line-to-rev-and-step ()
   "Evaluate the current line to the rev interpreter and go to next line."
   (interactive)
-  (if (process-rev) nil
+  (if (rev-process-rev) nil
 		  (run-rev))
   (pipe-line-to-rev t))
 
@@ -205,14 +205,14 @@ Optional argument STEP ."
 Argument START .
 Argument END ."
   (interactive "r")
-  (if (process-rev) nil
+  (if (rev-process-rev) nil
 		  (run-rev))
   (setq com (buffer-substring start end))	       ;reads command
   (setq lcom (length com))		       ;count chars
   (setq lastchar (substring com (1- lcom) lcom)) ;get last char
   (unless (string-match "\n" lastchar) ;if last char is not "\n", then...
     (setq com (concat com "\n")))	     ;...add it!
-  (setq sprocess (process-rev-choose))
+  (setq sprocess (rev-process-rev-choose))
   (setq sbuffer (process-buffer sprocess))
   (while (> (length com) 0)
     (setq pos (string-match "\n" com))
@@ -226,14 +226,14 @@ Argument END ."
 (defun pipe-buffer-to-rev ()
   "Evaluate whole buffer to the rev interpreter."
   (interactive)
-  (if (process-rev) nil
+  (if (rev-process-rev) nil
 		  (run-rev))
   (pipe-region-to-rev (point-min) (point-max)))
 
 (defun pipe-function-to-rev ()
 "Evaluate function to the rev interpreter."
 (interactive)
-  (if (process-rev) nil
+  (if (rev-process-rev) nil
 		  (run-rev))
 (setq beg-end (rev-beg-end-of-function))
 (if beg-end
