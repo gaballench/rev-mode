@@ -240,9 +240,9 @@ Argument END ."
     (save-excursion
       (setq beg (nth 0 beg-end))
       (setq end (nth 1 beg-end))
-      (goto-line beg)
+      (forward-line beg)
       (setq origin (point-at-bol))
-      (goto-line end)
+      (forward-line end)
       (setq terminal (point-at-eol))
       (pipe-region-to-rev origin terminal))
   (message "No function at current point.")))
