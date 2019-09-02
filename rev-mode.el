@@ -179,7 +179,6 @@ Argument COMMAND is a string to be redirected."
 ;  (setq com (format "cd %s" (file-name-directory default-directory)))
 ;  (shell-eval-line sprocess com))
 
-
 (defun pipe-line-to-rev (&optional step)
   "Evaluate the current line to the rev interpreter.
 Optional argument STEP ."
@@ -222,7 +221,6 @@ Argument END ."
     (rev-eval-line sprocess scom)
     (accept-process-output sprocess 0 10)
     ))
-
 
 (defun pipe-buffer-to-rev ()
   "Evaluate whole buffer to the rev interpreter."
@@ -272,13 +270,20 @@ Argument END ."
   (if (and (<= (line-number-at-pos) end) (>= (line-number-at-pos) beg))
       (list beg end)
     nil))
+
 ;;;;;;;;;;;;;;
 
 ;;;; In development
 ;; code for autodetecting dot files and compiling with graphviz
 ;; still something missing as it is detecting temp files (#)
 ;(first-error (lgrep "digraph" "-r --exclude=\\# --exclude=\\*.Rev" (file-name-directory buffer-file-name)))
-
+;(defun rev-mode-preview-graph ()
+;  (interactive)
+;  (grep-compute-defaults)
+;  (lgrep "digraph" "--exclude=\*.Rev --exclude=\*.el" "*" (file-name-directory buffer-file-name) t)
+;  (next-error)
+;  (message "I keep doing things after first-error...")
+;  (graphviz-dot-preview))
 
 ;; Keybindings
 (defun rev-mode-sh-hook ()                                             "."
