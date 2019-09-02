@@ -4,7 +4,7 @@
 
 ;; Author: Gustavo A. Ballen <gaballench@gmail.com>
 ;; Keywords: lisp, languages, files
-;; Created: 4 May 2018
+;; Created: 2 Sep 2019
 ;; Version: 0.0.1
 ;; Package-Requires: ((emacs "24"))
 ;; URL: https://github.com/gaballench/rev-mode
